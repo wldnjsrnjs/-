@@ -2,198 +2,166 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>일찍 자면 안돼지</title>
+  <title>일찍 자면 안돼지!</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: "Arial", sans-serif;
+      font-family: 'Arial', sans-serif;
       background-color: black;
       color: white;
-      overflow: hidden;
+      text-align: center;
+      overflow-x: hidden;
     }
-    #game {
-      position: relative;
-      width: 100vw;
+    .screen {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       height: 100vh;
       background-size: cover;
       background-position: center;
-      transition: background-image 1s ease-in-out;
+      padding: 20px;
     }
-    .centered {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
+    #startScreen {
+      display: flex;
+      background-image: url('night.png');
+    }
+    .banner {
+      background-color: rgba(255, 255, 0, 0.9);
+      color: black;
+      font-size: 2rem;
+      padding: 20px;
+      border-radius: 15px;
+      animation: bounce 2s infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
     }
     button {
+      font-size: 1.2rem;
       padding: 10px 20px;
-      font-size: 16px;
       margin: 10px;
       cursor: pointer;
-      border: none;
       border-radius: 10px;
-      background-color: #ff4081;
-      color: white;
-      transition: background-color 0.3s;
+      border: none;
     }
-    button:hover {
-      background-color: #e91e63;
+    .image-container {
+      position: relative;
+      display: inline-block;
+      margin-top: 20px;
     }
-    #friend-img {
-      width: 180px;
-      height: auto;
+    .image-container img.friend {
+      width: 200px;
       border-radius: 20px;
-      margin-top: 10px;
     }
-    #cake {
-      width: 120px;
-      margin-top: 10px;
-    }
-    #headband {
-      width: 80px;
+    .image-container img.headband {
       position: absolute;
       top: -20px;
       left: 50%;
       transform: translateX(-50%);
+      width: 120px;
     }
-    #food-img {
-      width: 180px;
-      margin-top: 15px;
+    .funny-message {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      color: yellow;
     }
-    #speech-bubble {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(255,255,255,0.9);
-      color: black;
-      padding: 10px;
-      border-radius: 10px;
+    audio {
       display: none;
-      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div id="game">
-    <div id="speech-bubble"></div>
-    <div class="centered" id="start-screen">
-      <h1>생일축하, 안돼지!</h1>
-      <p>지금 바로 무료 해외 여행을 떠나보세요!!</p>
-      <button onclick="nextStep()">시작하기</button>
+  <div id="startScreen" class="screen">
+    <div class="banner">생일축하, 안돼지! 지금 바로 무료 해외 여행을 떠나보세요!!</div>
+    <button onclick="goToHeadbandSelection()">여행 떠나기</button>
+  </div>  <div id="headbandScreen" class="screen">
+    <h2>생일 머리띠를 골라주세요!</h2>
+    <div>
+      <button onclick="selectHeadband(1)">머리띠 1</button>
+      <button onclick="selectHeadband(2)">머리띠 2</button>
+      <button onclick="selectHeadband(3)">머리띠 3</button>
     </div>
-    <div class="centered" id="location-screen" style="display:none;">
-      <h2>어디서 생일파티를 열까요?</h2>
-      <button onclick="selectLocation('library')">도서관</button>
-      <button onclick="selectLocation('beach')">바다</button>
-      <button onclick="selectLocation('study')">스터디카페</button>
-      <button onclick="selectLocation('hut')">오두막</button>
+  </div>  <div id="locationScreen" class="screen">
+    <h2>생일 파티 장소를 선택하세요!</h2>
+    <button onclick="selectLocation('library')">도서관</button>
+    <button onclick="selectLocation('beach')">바닷가</button>
+    <button onclick="selectLocation('study')">스터디카페</button>
+    <button onclick="selectLocation('hut')">오두막</button>
+  </div>  <div id="partyScreen" class="screen">
+    <div class="funny-message" id="funnyText"></div>
+    <div class="image-container">
+      <img src="friend.png" id="friendImg" class="friend">
+      <img src="" id="headbandImg" class="headband">
     </div>
-    <div class="centered" id="headband-screen" style="display:none;">
-      <h2>생일 머리띠를 골라주세요!</h2>
-      <button onclick="selectHeadband('headband1')">머리띠1</button>
-      <button onclick="selectHeadband('headband2')">머리띠2</button>
-      <button onclick="selectHeadband('headband3')">머리띠3</button>
-    </div>
-    <div class="centered" id="cake-screen" style="display:none;">
-      <h2>생일 축하 노래를 들어볼까요?</h2>
-      <audio id="birthday-song" src="song.mp3"></audio>
-      <button onclick="playSong()">노래 재생</button>
-    </div>
-    <div class="centered" id="blow-candle-screen" style="display:none;">
-      <h2>촛불을 꺼보세요!</h2>
-      <button onclick="blowCandle()">후~ 불기</button>
-    </div>
-    <div class="centered" id="food-screen" style="display:none;">
-      <h2>먹고 싶은 음식은?</h2>
-      <input type="text" id="food-input" placeholder="예: 초밥, 삼겹살" />
-      <button onclick="showFood()">생일상 차리기</button>
-    </div>
-  </div>
+    <img src="cake.png" alt="케이크" style="width:150px; margin-top:20px;" />
+    <br />
+    <button onclick="playSong()">생일 축하 노래 재생</button>
+    <button onclick="stopSong()">노래 중지</button>
+    <br />
+    <button id="blowBtn" style="display:none; margin-top: 20px;" onclick="blowCandle()">촛불 불기</button>
+  </div><audio id="song" src="song.mp3"></audio>
+
   <script>
-    let currentStep = 0;
-    let headband = "";
-    const game = document.getElementById("game");
-    const friendImg = document.createElement("img");
-    friendImg.src = "friend.png";
-    friendImg.id = "friend-img";const cakeImg = document.createElement("img");
-cakeImg.src = "cake.png";
-cakeImg.id = "cake";
+    let selectedHeadband = 1;
+    let selectedLocation = '';
 
-const headbandImg = document.createElement("img");
-headbandImg.id = "headband";
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'flex';
+    }
 
-const speechBubble = document.getElementById("speech-bubble");
+    function goToHeadbandSelection() {
+      showScreen('headbandScreen');
+    }
 
-function nextStep() {
-  document.getElementById("start-screen").style.display = "none";
-  document.getElementById("location-screen").style.display = "block";
-}
+    function selectHeadband(num) {
+      selectedHeadband = num;
+      showScreen('locationScreen');
+    }
 
-function selectLocation(location) {
-  const backgroundMap = {
-    library: "library.png",
-    beach: "beach.png",
-    study: "study.png",
-    hut: "hut.png"
-  };
-  game.style.backgroundImage = `url('${backgroundMap[location]}')`;
-  document.getElementById("location-screen").style.display = "none";
-  document.getElementById("headband-screen").style.display = "block";
+    function selectLocation(loc) {
+      selectedLocation = loc;
+      const bgMap = {
+        library: 'library.png',
+        beach: 'beach.png',
+        study: 'study.png',
+        hut: 'hut.png'
+      };
+      const funnyMessages = {
+        library: '쉿! 생일파티는 조용히! 사서 선생님이 쳐다본다!',
+        beach: '모래 위에서 케이크 먹으면 맛이 두 배!',
+        study: '책 사이에 숨어서 파티하는 너… 대단해!',
+        hut: '호랑이도 생일 축하하러 나올 듯한 오두막!'
+      };
+      document.getElementById('partyScreen').style.backgroundImage = `url('${bgMap[loc]}')`;
+      document.getElementById('funnyText').textContent = funnyMessages[loc];
+      document.getElementById('headbandImg').src = `headband${selectedHeadband}.png`;
+      showScreen('partyScreen');
+    }
 
-  const funnyText = {
-    library: "조용히 해주세요! 여긴 도서관입니다!",
-    beach: "비키니 파티 시작합니다!",
-    study: "공부하다가 생일파티까지?!",
-    hut: "깊은 산 속에서 펼쳐지는 파티라니!"
-  };
-  showSpeech(funnyText[location]);
-}
+    function playSong() {
+      const audio = document.getElementById('song');
+      audio.play();
+      setTimeout(() => {
+        document.getElementById('blowBtn').style.display = 'inline-block';
+      }, 5000);
+    }
 
-function showSpeech(text) {
-  speechBubble.textContent = text;
-  speechBubble.style.display = "block";
-  setTimeout(() => {
-    speechBubble.style.display = "none";
-  }, 3000);
-}
+    function stopSong() {
+      const audio = document.getElementById('song');
+      audio.pause();
+      audio.currentTime = 0;
+    }
 
-function selectHeadband(band) {
-  headband = band + ".png";
-  headbandImg.src = headband;
-  document.getElementById("headband-screen").style.display = "none";
-  document.getElementById("cake-screen").style.display = "block";
-}
+    function blowCandle() {
+      alert('촛불이 꺼졌어요! 펑! 폭죽과 함께 생일 축하 완료!');
+    }
 
-function playSong() {
-  const song = document.getElementById("birthday-song");
-  song.play();
-  setTimeout(() => {
-    document.getElementById("cake-screen").style.display = "none";
-    document.getElementById("blow-candle-screen").style.display = "block";
-  }, 5000);
-}
-
-function blowCandle() {
-  const firework = new Audio("https://www.fesliyanstudios.com/play-mp3/387");
-  firework.play();
-  document.getElementById("blow-candle-screen").style.display = "none";
-  document.getElementById("food-screen").style.display = "block";
-  game.appendChild(friendImg);
-  game.appendChild(headbandImg);
-  game.appendChild(cakeImg);
-}
-
-function showFood() {
-  const food = document.getElementById("food-input").value;
-  const foodImg = document.createElement("img");
-  foodImg.src = "food.png";
-  foodImg.id = "food-img";
-  game.appendChild(foodImg);
-  showSpeech(`${food} 나왔습니다! 맛있게 드세요!`);
-}
-
-  </script>
-</body>
+    window.onload = () => {
+      showScreen('startScreen');
+    };
+  </script></body>
 </html>
