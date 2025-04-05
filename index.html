@@ -1,116 +1,146 @@
 <!DOCTYPE html><html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>일찍 자면 안돼지</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('https://images.unsplash.com/photo-1508264165352-258db2ebd59b') no-repeat center center fixed;
+      padding: 0;
+      font-family: 'Comic Sans MS', cursive;
       background-size: cover;
-      color: white;
+      background-position: center;
+      transition: background-image 0.5s ease-in-out;
       text-align: center;
+      color: white;
     }
-    .container {
-      padding: 3em 1em;
-      background-color: rgba(0, 0, 0, 0.6);
+    #app {
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.5);
       min-height: 100vh;
     }
-    h1 {
-      font-size: 3em;
-      margin-bottom: 0.2em;
-      color: #ffd700;
+    .section {
+      margin: 20px auto;
     }
-    button {
-      font-size: 1.2em;
-      padding: 0.6em 1.5em;
-      border: none;
-      border-radius: 10px;
-      background-color: #ff69b4;
-      color: white;
-      cursor: pointer;
-      margin-top: 1em;
+    img {
+      max-width: 200px;
     }
-    .hidden {
+    #friend-container {
+      position: relative;
+      display: inline-block;
+    }
+    #headband {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+    }
+    #cake {
+      margin-top: 20px;
+      width: 150px;
+    }
+    #fireworks {
       display: none;
-    }
-    select, input {
-      margin-top: 1em;
-      padding: 0.5em;
-      font-size: 1em;
-    }
-    img.friend-face {
-      margin-top: 1em;
-      width: 200px;
-      border-radius: 20px;
-      box-shadow: 0 0 10px white;
-    }
-    .celebration {
-      font-size: 1.5em;
-      margin-top: 1em;
-      color: #ffccff;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div id="app">
     <h1>생일 축하합니다, 안돼지!</h1>
-    <p class="celebration">오늘 밤, 당신을 위한 특별한 여행이 준비되어 있습니다!</p>
-    <button onclick="startGame()">여행 떠나기</button><div id="game" class="hidden">
-  <p>어디서 파티할까요?</p>
-  <select id="place">
-    <option value="도서관">도서관</option>
-    <option value="바다">바다</option>
-    <option value="스터디카페">스터디카페</option>
-    <option value="오두막">오두막</option>
+    <h2>무료 해외여행을 보내드립니다! (단, 도서관 포함)</h2><div class="section">
+  <label>장소 선택:</label>
+  <select id="location">
+    <option value="beach">바다</option>
+    <option value="library">도서관</option>
+    <option value="study">스터디카페</option>
+    <option value="hut">오두막</option>
   </select>
-  <br>
-  <input id="food" type="text" placeholder="먹고 싶은 음식 입력" />
-  <br>
-  <button onclick="celebrate()">파티 시작!</button>
-  <div id="result" class="hidden">
-    <p id="location-text"></p>
-    <img class="friend-face" src="friend.jpg" alt="안돼지 얼굴" />
-    <p id="food-text"></p>
-    <img id="food-img" src="" width="200" />
-    <p id="cake-text">케이크에 촛불을 불어보세요!</p>
-    <button onclick="blowCandle()">후우~</button>
-    <audio id="firework-sound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
-    <p id="final-scene" class="celebration hidden"></p>
-  </div>
 </div>
 
+<div class="section">
+  <label>머리띠 선택:</label>
+  <select id="headband-select">
+    <option value="headband1.png">머리띠1</option>
+    <option value="headband2.png">머리띠2</option>
+    <option value="headband3.png">머리띠3</option>
+  </select>
+</div>
+
+<div id="friend-container">
+  <img id="friend" src="friend.jpg" alt="친구 얼굴">
+  <img id="headband" src="headband1.png" alt="머리띠">
+</div>
+
+<img id="cake" src="cake.png" alt="생일 케이크">
+
+<div class="section">
+  <label>먹고 싶은 음식 입력:</label>
+  <input type="text" id="food-input">
+  <button onclick="searchFood()">음식 생성</button>
+  <div><img id="food-img" src="" alt="음식 이미지" style="margin-top: 10px; max-width: 150px;"></div>
+</div>
+
+<div class="section">
+  <button id="start-song" onclick="playSong()">생일 축하 노래 시작</button>
+  <button id="blow-candle" onclick="blowCandle()" disabled>촛불 불기</button>
+</div>
+
+<audio id="birthday-song" src="happy_birthday.mp3"></audio>
+<audio id="fireworks" src="fireworks.mp3"></audio>
+
+<div id="result" class="section"></div>
+
   </div>  <script>
-    function startGame() {
-      document.querySelector("button").classList.add("hidden");
-      document.getElementById("game").classList.remove("hidden");
+    const locationSelect = document.getElementById("location");
+    const headbandSelect = document.getElementById("headband-select");
+    const headbandImg = document.getElementById("headband");
+    const foodInput = document.getElementById("food-input");
+    const foodImg = document.getElementById("food-img");
+    const blowBtn = document.getElementById("blow-candle");
+    const result = document.getElementById("result");
+    const fireworks = document.getElementById("fireworks");
+
+    const bgMap = {
+      beach: "beach.jpg",
+      library: "library.jpg",
+      study: "study.jpg",
+      hut: "hut.jpg"
+    };
+
+    locationSelect.addEventListener("change", () => {
+      const bg = bgMap[locationSelect.value];
+      document.body.style.backgroundImage = `url(${bg})`;
+    });
+
+    headbandSelect.addEventListener("change", () => {
+      headbandImg.src = headbandSelect.value;
+    });
+
+    function searchFood() {
+      const keyword = foodInput.value.trim();
+      if (!keyword) return;
+      const imgUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(keyword)}`;
+      foodImg.src = imgUrl;
     }
 
-    function celebrate() {
-      const place = document.getElementById("place").value;
-      const food = document.getElementById("food").value;
-      const locationText = document.getElementById("location-text");
-      const foodText = document.getElementById("food-text");
-      const foodImg = document.getElementById("food-img");
-
-      locationText.innerText = `당신은 지금 ${place}에서 파티 중입니다!`;
-      foodText.innerText = `${food}을(를) 맛있게 먹고 있어요!`;
-      foodImg.src = `https://source.unsplash.com/400x300/?${food}`;
-
-      document.getElementById("result").classList.remove("hidden");
+    function playSong() {
+      document.getElementById("birthday-song").play();
+      setTimeout(() => {
+        blowBtn.disabled = false;
+      }, 5000);
     }
 
     function blowCandle() {
-      document.getElementById("cake-text").innerText = "촛불이 꺼졌어요!";
-      document.getElementById("firework-sound").play();
-      const place = document.getElementById("place").value;
-      let final = "즐거운 밤이에요!";
-      if (place === "도서관") {
-        final = "쉿! 시끄러워요! 사서 선생님한테 혼났어요!";
+      document.getElementById("fireworks").play();
+      const place = locationSelect.value;
+      let msg = "생일 축하해요 안돼지!";
+      if (place === "library") {
+        msg += " 하지만 도서관에선 조용히! 사서 선생님한테 혼났습니다.";
+      } else if (place === "study") {
+        msg += " 그런데 왜 여기서 파티를 하죠...?";
       }
-      document.getElementById("final-scene").innerText = final;
-      document.getElementById("final-scene").classList.remove("hidden");
+      result.textContent = msg;
     }
   </script></body>
 </html>
