@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>일찍 자면 안돼지</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1508264165352-258db2ebd59b') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      padding: 3em 1em;
+      background-color: rgba(0, 0, 0, 0.6);
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.2em;
+      color: #ffd700;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 0.6em 1.5em;
+      border: none;
+      border-radius: 10px;
+      background-color: #ff69b4;
+      color: white;
+      cursor: pointer;
+      margin-top: 1em;
+    }
+    .hidden {
+      display: none;
+    }
+    select, input {
+      margin-top: 1em;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    img.friend-face {
+      margin-top: 1em;
+      width: 200px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px white;
+    }
+    .celebration {
+      font-size: 1.5em;
+      margin-top: 1em;
+      color: #ffccff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>생일 축하합니다, 안돼지!</h1>
+    <p class="celebration">오늘 밤, 당신을 위한 특별한 여행이 준비되어 있습니다!</p>
+    <button onclick="startGame()">여행 떠나기</button><div id="game" class="hidden">
+  <p>어디서 파티할까요?</p>
+  <select id="place">
+    <option value="도서관">도서관</option>
+    <option value="바다">바다</option>
+    <option value="스터디카페">스터디카페</option>
+    <option value="오두막">오두막</option>
+  </select>
+  <br>
+  <input id="food" type="text" placeholder="먹고 싶은 음식 입력" />
+  <br>
+  <button onclick="celebrate()">파티 시작!</button>
+  <div id="result" class="hidden">
+    <p id="location-text"></p>
+    <img class="friend-face" src="friend.jpg" alt="안돼지 얼굴" />
+    <p id="food-text"></p>
+    <img id="food-img" src="" width="200" />
+    <p id="cake-text">케이크에 촛불을 불어보세요!</p>
+    <button onclick="blowCandle()">후우~</button>
+    <audio id="firework-sound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
+    <p id="final-scene" class="celebration hidden"></p>
+  </div>
+</div>
+
+  </div>  <script>
+    function startGame() {
+      document.querySelector("button").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+    }
+
+    function celebrate() {
+      const place = document.getElementById("place").value;
+      const food = document.getElementById("food").value;
+      const locationText = document.getElementById("location-text");
+      const foodText = document.getElementById("food-text");
+      const foodImg = document.getElementById("food-img");
+
+      locationText.innerText = `당신은 지금 ${place}에서 파티 중입니다!`;
+      foodText.innerText = `${food}을(를) 맛있게 먹고 있어요!`;
+      foodImg.src = `https://source.unsplash.com/400x300/?${food}`;
+
+      document.getElementById("result").classList.remove("hidden");
+    }
+
+    function blowCandle() {
+      document.getElementById("cake-text").innerText = "촛불이 꺼졌어요!";
+      document.getElementById("firework-sound").play();
+      const place = document.getElementById("place").value;
+      let final = "즐거운 밤이에요!";
+      if (place === "도서관") {
+        final = "쉿! 시끄러워요! 사서 선생님한테 혼났어요!";
+      }
+      document.getElementById("final-scene").innerText = final;
+      document.getElementById("final-scene").classList.remove("hidden");
+    }
+  </script></body>
+</html>
