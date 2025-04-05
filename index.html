@@ -54,7 +54,7 @@
     }
     #headband {
       width: 120px;
-      margin-bottom: 180px;
+      margin-bottom: 150px; /* 위치 위로 조금 수정 */
     }
     #message {
       position: absolute;
@@ -82,7 +82,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: url('https://media.giphy.com/media/3o6ZsW0KMGkvi0kDCI/giphy.gif') center/cover no-repeat;
+      background: url('https://media.giphy.com/media/xT1XG7AxKcAwJKpBOA/giphy.gif') center/cover no-repeat; /* 새로운 폭죽 효과 */
       display: none;
       z-index: 20;
     }
@@ -214,7 +214,30 @@
       img.src = `https://source.unsplash.com/300x200/?${food}`;
       img.style.marginTop = "10px";
       messageBox.innerHTML = `짜잔! ${food} 생일상이 도착했습니다!`;
+
+      // 장소별 웃긴 멘트 추가
+      setTimeout(() => {
+        messageBox.innerHTML += `<br><b>선택한 장소에서 웃긴 멘트:</b> ${places[food] ? places[food].message : "이곳은 아직 비어있습니다!"}`;
+      }, 2000);
+      
       messageBox.appendChild(img);
+
+      // 처음으로 돌아가기 버튼
+      setTimeout(() => {
+        const restartBtn = document.createElement("button");
+        restartBtn.innerText = "처음으로 돌아가기";
+        restartBtn.className = "button";
+        restartBtn.onclick = () => restart();
+        messageBox.appendChild(restartBtn);
+      }, 3000);
+    }
+
+    function restart() {
+      messageBox.innerHTML = "올해의 생일은 끝났습니다!";
+      // 게임 시작 전 상태로 초기화
+      setTimeout(() => {
+        location.reload();
+      }, 2000);
     }
   </script>
 </body>
