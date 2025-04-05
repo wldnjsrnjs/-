@@ -41,20 +41,22 @@
       border: none;
       cursor: pointer;
     }
-    #friend, #headband {
+    #friend {
       position: absolute;
-      bottom: 15%;
+      bottom: 20%;
       left: 50%;
       transform: translateX(-50%);
       transition: transform 1s ease;
       z-index: 5;
-    }
-    #friend {
       width: 200px;
     }
     #headband {
+      position: absolute;
+      bottom: 40%;
+      left: 50%;
+      transform: translateX(-50%);
       width: 120px;
-      margin-bottom: 140px; /* 머리띠 위치를 위로 조금 더 올림 */
+      z-index: 5;
     }
     #message {
       position: absolute;
@@ -70,11 +72,12 @@
     }
     #cake {
       position: absolute;
-      bottom: 5%;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 10%;
+      top: 50%;
+      transform: translateY(-50%);
       width: 150px;
       display: none;
+      z-index: 10;
     }
     #explosion {
       position: absolute;
@@ -82,21 +85,31 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: url('https://media.giphy.com/media/xT1XG7AxKcAwJKpBOA/giphy.gif') center/cover no-repeat; /* 새로운 폭죽 효과 */
+      background: url('https://media.giphy.com/media/xT1XG7AxKcAwJKpBOA/giphy.gif') center/cover no-repeat;
       display: none;
       z-index: 20;
     }
     #foodImage {
       position: absolute;
-      bottom: 20%;
-      left: 50%;
-      transform: translateX(-50%);
+      right: 10%;
+      top: 50%;
+      transform: translateY(-50%);
       width: 250px;
       display: none;
     }
     input {
       margin-top: 10px;
       padding: 5px;
+    }
+    .starry-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url('https://media.giphy.com/media/JcR2bhoCJz1sA/giphy.gif') center/cover no-repeat;
+      display: none;
+      z-index: 15;
     }
   </style>
 </head>
@@ -112,6 +125,7 @@
     <img id="headband" class="hidden" src="">
     <img id="cake" src="cake.png">
     <div id="explosion"></div>
+    <div class="starry-background" id="starryBackground"></div>
     <img id="foodImage" src="" alt="Food Image">
     <audio id="song" src="song.mp3"></audio>
   </div>
@@ -142,6 +156,7 @@
     const friend = document.getElementById("friend");
     const cake = document.getElementById("cake");
     const explosion = document.getElementById("explosion");
+    const starryBackground = document.getElementById("starryBackground");
     const song = document.getElementById("song");
     const foodImage = document.getElementById("foodImage");
     const startButton = document.getElementById("startButton");
@@ -204,8 +219,8 @@
           blowBtn.className = "button";
           blowBtn.onclick = () => {
             cake.style.display = "none";
-            explosion.style.display = "block";
-            setTimeout(() => explosion.style.display = "none", 3000); // 폭죽 효과 시간 3초로 변경
+            starryBackground.style.display = "block"; // 별이 떨어지는 배경
+            setTimeout(() => starryBackground.style.display = "none", 5000); // 5초 후 별 배경 사라짐
             messageBox.innerHTML = "먹고 싶은 음식을 입력하세요!";
             const input = document.createElement("input");
             input.placeholder = "예: 삼겹살, 초밥 등";
@@ -226,9 +241,6 @@
         foodImage.src = `https://source.unsplash.com/250x200/?${food}`;
         foodImage.style.display = "block";
         messageBox.innerHTML = `짜잔! ${food} 생일상이 도착했습니다!`;
-
-        // 장소별 웃긴 멘트 추가
-        messageBox.innerHTML += `<br><b>선택한 장소에서 웃긴 멘트:</b> ${places[food] ? places[food].message : "이곳은 아직 비어있습니다!"}`;
 
         // 처음으로 돌아가기 버튼
         setTimeout(() => {
