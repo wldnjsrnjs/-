@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ko">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>일찍 자면 안돼지</title>
@@ -96,7 +97,7 @@
     <div class="banner" id="startBanner">
       생일 축하, 안돼지!<br>
       지금 바로 무료 해외 여행을 떠나보세요!!<br>
-      <button class="button" onclick="showPlaces()">여행 떠나기</button>
+      <button class="button" id="startButton">여행 떠나기</button>
     </div>
     <div id="message" class="hidden"></div>
     <img id="friend" src="friend.png" class="hidden">
@@ -104,7 +105,9 @@
     <img id="cake" src="cake.png">
     <div id="explosion"></div>
     <audio id="song" src="song.mp3"></audio>
-  </div>  <script>
+  </div>
+
+  <script>
     const places = {
       "도서관": {
         image: "library.png",
@@ -131,6 +134,9 @@
     const cake = document.getElementById("cake");
     const explosion = document.getElementById("explosion");
     const song = document.getElementById("song");
+    const startButton = document.getElementById("startButton");
+
+    startButton.addEventListener("click", showPlaces);
 
     function showPlaces() {
       document.getElementById("startBanner").style.display = "none";
@@ -207,5 +213,6 @@
       messageBox.innerHTML = `짜잔! ${food} 생일상이 도착했습니다!`;
       messageBox.appendChild(img);
     }
-  </script></body>
+  </script>
+</body>
 </html>
