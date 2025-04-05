@@ -1,146 +1,185 @@
-<!DOCTYPE html><html lang="ko">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>일찍 자면 안돼지</title>
   <style>
     body {
+      font-family: 'Arial', sans-serif;
+      background-color: #001f3f;
+      color: #fff;
+      text-align: center;
       margin: 0;
       padding: 0;
-      font-family: 'Comic Sans MS', cursive;
-      background-size: cover;
-      background-position: center;
-      transition: background-image 0.5s ease-in-out;
-      text-align: center;
-      color: white;
+      overflow-x: hidden;
     }
-    #app {
-      padding: 20px;
-      background-color: rgba(0, 0, 0, 0.5);
-      min-height: 100vh;
-    }
-    .section {
-      margin: 20px auto;
-    }
-    img {
-      max-width: 200px;
-    }
-    #friend-container {
-      position: relative;
-      display: inline-block;
-    }
-    #headband {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-    }
-    #cake {
-      margin-top: 20px;
-      width: 150px;
-    }
-    #fireworks {
+
+    .step {
       display: none;
+      padding: 30px;
+      transition: all 1s ease-in-out;
+    }
+
+    .visible {
+      display: block;
+    }
+
+    h1.bounce {
+      font-size: 3em;
+      color: #ffd700;
+      text-shadow: 0 0 10px white;
+      animation: bounce 1s infinite;
+    }
+
+    .subtitle {
+      font-size: 1.4em;
+      color: #ffccff;
+      margin: 20px 0;
+    }
+
+    .button-group button {
+      margin: 8px;
+      padding: 12px 24px;
+      font-size: 1em;
+      cursor: pointer;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .button-group button:hover {
+      background: #ff1493;
+    }
+
+    img {
+      max-width: 250px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 15px;
+    }
+
+    #foodResult img {
+      width: 200px;
+      border: 3px solid #fff;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .fadein {
+      animation: fadein 1s ease-in-out;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <div id="app">
-    <h1>생일 축하합니다, 안돼지!</h1>
-    <h2>무료 해외여행을 보내드립니다! (단, 도서관 포함)</h2><div class="section">
-  <label>장소 선택:</label>
-  <select id="location">
-    <option value="beach">바다</option>
-    <option value="library">도서관</option>
-    <option value="study">스터디카페</option>
-    <option value="hut">오두막</option>
-  </select>
-</div>
+  <div id="game-container">
+    <div id="step1" class="step visible">
+      <h1 class="bounce">생일 축하, 안돼지!</h1>
+      <p class="subtitle">지금 바로 <b>무료 해외 여행</b>을 떠나보세요!!</p>
+      <p>먼저 생일 머리띠부터 골라주세요!</p>
+      <div class="button-group">
+        <button onclick="selectHeadband(0)">머리띠 1</button>
+        <button onclick="selectHeadband(1)">머리띠 2</button>
+        <button onclick="selectHeadband(2)">머리띠 3</button>
+      </div>
+    </div>
 
-<div class="section">
-  <label>머리띠 선택:</label>
-  <select id="headband-select">
-    <option value="headband1.png">머리띠1</option>
-    <option value="headband2.png">머리띠2</option>
-    <option value="headband3.png">머리띠3</option>
-  </select>
-</div>
+    <div id="step2" class="step">
+      <p>생일 파티 장소를 골라주세요!</p>
+      <div class="button-group">
+        <button onclick="selectPlace('library')">도서관</button>
+        <button onclick="selectPlace('beach')">해변</button>
+        <button onclick="selectPlace('study')">스터디카페</button>
+        <button onclick="selectPlace('cabin')">오두막</button>
+      </div>
+    </div>
 
-<div id="friend-container">
-  <img id="friend" src="friend.jpg" alt="친구 얼굴">
-  <img id="headband" src="headband1.png" alt="머리띠">
-</div>
+    <div id="step3" class="step">
+      <p>5초짜리 생일 축하 노래가 재생됩니다!</p>
+      <audio id="birthday-audio" src="song.mp3" autoplay></audio>
+      <p>노래가 끝나면 촛불을 끌 수 있어요!</p>
+    </div>
 
-<img id="cake" src="cake.png" alt="생일 케이크">
+    <div id="step4" class="step">
+      <p>아래 생일 케이크의 촛불을 꺼보세요!</p>
+      <img src="cake.png" id="cake" alt="케이크" />
+      <button onclick="blowCandle()">촛불 끄기</button>
+    </div>
 
-<div class="section">
-  <label>먹고 싶은 음식 입력:</label>
-  <input type="text" id="food-input">
-  <button onclick="searchFood()">음식 생성</button>
-  <div><img id="food-img" src="" alt="음식 이미지" style="margin-top: 10px; max-width: 150px;"></div>
-</div>
+    <div id="step5" class="step">
+      <p>먹고 싶은 생일 음식을 입력하세요!</p>
+      <input type="text" id="foodInput" placeholder="예: 초밥, 피자" />
+      <button onclick="showFood()">생일상 차리기</button>
+      <div id="foodResult"></div>
+    </div>
 
-<div class="section">
-  <button id="start-song" onclick="playSong()">생일 축하 노래 시작</button>
-  <button id="blow-candle" onclick="blowCandle()" disabled>촛불 불기</button>
-</div>
+    <div id="finalScene" class="step">
+      <img src="friend.png" alt="친구 이미지" />
+      <p id="funnyMessage">...</p>
+      <p>도서관에서 파티하다가 사서 선생님한테 혼났습니다!</p>
+      <p>하지만 최고의 생일이었어요, 안돼지!</p>
+    </div>
+  </div>
 
-<audio id="birthday-song" src="happy_birthday.mp3"></audio>
-<audio id="fireworks" src="fireworks.mp3"></audio>
+  <script>
+    let currentStep = 1;
 
-<div id="result" class="section"></div>
-
-  </div>  <script>
-    const locationSelect = document.getElementById("location");
-    const headbandSelect = document.getElementById("headband-select");
-    const headbandImg = document.getElementById("headband");
-    const foodInput = document.getElementById("food-input");
-    const foodImg = document.getElementById("food-img");
-    const blowBtn = document.getElementById("blow-candle");
-    const result = document.getElementById("result");
-    const fireworks = document.getElementById("fireworks");
-
-    const bgMap = {
-      beach: "beach.jpg",
-      library: "library.jpg",
-      study: "study.jpg",
-      hut: "hut.jpg"
-    };
-
-    locationSelect.addEventListener("change", () => {
-      const bg = bgMap[locationSelect.value];
-      document.body.style.backgroundImage = `url(${bg})`;
-    });
-
-    headbandSelect.addEventListener("change", () => {
-      headbandImg.src = headbandSelect.value;
-    });
-
-    function searchFood() {
-      const keyword = foodInput.value.trim();
-      if (!keyword) return;
-      const imgUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(keyword)}`;
-      foodImg.src = imgUrl;
+    function goToNextStep() {
+      document.getElementById("step" + currentStep).classList.remove("visible");
+      currentStep++;
+      document.getElementById("step" + currentStep).classList.add("visible");
     }
 
-    function playSong() {
-      document.getElementById("birthday-song").play();
-      setTimeout(() => {
-        blowBtn.disabled = false;
-      }, 5000);
+    function selectHeadband(index) {
+      alert("머리띠 " + (index + 1) + " 선택 완료! 빛나는 안돼지!");
+      goToNextStep();
+    }
+
+    function selectPlace(place) {
+      alert("장소 선택: " + place + "! 파티 준비 중...");
+      document.body.style.backgroundImage = `url('${place}.jpg')`;
+      document.body.style.backgroundSize = 'cover';
+      goToNextStep();
+
+      const audio = document.getElementById("birthday-audio");
+      if (audio) {
+        audio.onended = () => {
+          goToNextStep();
+        };
+      }
     }
 
     function blowCandle() {
-      document.getElementById("fireworks").play();
-      const place = locationSelect.value;
-      let msg = "생일 축하해요 안돼지!";
-      if (place === "library") {
-        msg += " 하지만 도서관에선 조용히! 사서 선생님한테 혼났습니다.";
-      } else if (place === "study") {
-        msg += " 그런데 왜 여기서 파티를 하죠...?";
-      }
-      result.textContent = msg;
+      alert("촛불이 꺼졌어요! 폭죽 팡팡!");
+      goToNextStep();
     }
-  </script></body>
+
+    function showFood() {
+      const food = document.getElementById("foodInput").value;
+      const result = document.getElementById("foodResult");
+      result.innerHTML = "";
+
+      const img = document.createElement("img");
+      img.src = "food.jpg"; // 실제로는 AI 이미지 생성이나 여러 음식 이미지로 확장 가능
+      img.alt = food;
+      result.appendChild(img);
+
+      setTimeout(() => {
+        document.getElementById("funnyMessage").innerText =
+          "입력한 음식: " + food + " (먹다가 입천장 데었어요!)";
+        goToNextStep();
+      }, 2000);
+    }
+  </script>
+</body>
 </html>
