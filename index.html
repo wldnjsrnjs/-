@@ -54,7 +54,7 @@
     }
     #headband {
       width: 120px;
-      margin-bottom: 150px; /* 위치 위로 조금 수정 */
+      margin-bottom: 140px; /* 머리띠 위치를 위로 조금 더 올림 */
     }
     #message {
       position: absolute;
@@ -86,6 +86,14 @@
       display: none;
       z-index: 20;
     }
+    #foodImage {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px;
+      display: none;
+    }
     input {
       margin-top: 10px;
       padding: 5px;
@@ -104,6 +112,7 @@
     <img id="headband" class="hidden" src="">
     <img id="cake" src="cake.png">
     <div id="explosion"></div>
+    <img id="foodImage" src="" alt="Food Image">
     <audio id="song" src="song.mp3"></audio>
   </div>
 
@@ -134,6 +143,7 @@
     const cake = document.getElementById("cake");
     const explosion = document.getElementById("explosion");
     const song = document.getElementById("song");
+    const foodImage = document.getElementById("foodImage");
     const startButton = document.getElementById("startButton");
 
     startButton.addEventListener("click", showPlaces);
@@ -162,7 +172,7 @@
       friend.classList.remove("hidden");
       headband.classList.add("hidden");
       friend.style.transform = "translateX(-50%) translateY(-10px)";
-      setTimeout(() => chooseHeadband(), 1500);
+      setTimeout(() => chooseHeadband(), 2000); // 2초 후 머리띠 선택
     }
 
     function chooseHeadband() {
@@ -179,57 +189,56 @@
     }
 
     function showCake() {
-      messageBox.innerHTML = "생일축하 노래를 듣고 촛불을 꺼보세요!";
-      const stopBtn = document.createElement("button");
-      stopBtn.innerText = "노래 중지";
-      stopBtn.className = "button";
-      stopBtn.onclick = () => song.pause();
-      messageBox.appendChild(stopBtn);
-      song.play();
       setTimeout(() => {
-        cake.style.display = "block";
-        const blowBtn = document.createElement("button");
-        blowBtn.innerText = "촛불 끄기";
-        blowBtn.className = "button";
-        blowBtn.onclick = () => {
-          cake.style.display = "none";
-          explosion.style.display = "block";
-          setTimeout(() => explosion.style.display = "none", 2000);
-          messageBox.innerHTML = "먹고 싶은 음식을 입력하세요!";
-          const input = document.createElement("input");
-          input.placeholder = "예: 삼겹살, 초밥 등";
-          const foodBtn = document.createElement("button");
-          foodBtn.innerText = "생일상 차리기";
-          foodBtn.className = "button";
-          foodBtn.onclick = () => showFood(input.value);
-          messageBox.appendChild(input);
-          messageBox.appendChild(foodBtn);
-        };
-        messageBox.appendChild(blowBtn);
-      }, 5000);
+        messageBox.innerHTML = "생일축하 노래를 듣고 촛불을 꺼보세요!";
+        const stopBtn = document.createElement("button");
+        stopBtn.innerText = "노래 중지";
+        stopBtn.className = "button";
+        stopBtn.onclick = () => song.pause();
+        messageBox.appendChild(stopBtn);
+        song.play();
+        setTimeout(() => {
+          cake.style.display = "block";
+          const blowBtn = document.createElement("button");
+          blowBtn.innerText = "촛불 끄기";
+          blowBtn.className = "button";
+          blowBtn.onclick = () => {
+            cake.style.display = "none";
+            explosion.style.display = "block";
+            setTimeout(() => explosion.style.display = "none", 3000); // 폭죽 효과 시간 3초로 변경
+            messageBox.innerHTML = "먹고 싶은 음식을 입력하세요!";
+            const input = document.createElement("input");
+            input.placeholder = "예: 삼겹살, 초밥 등";
+            const foodBtn = document.createElement("button");
+            foodBtn.innerText = "생일상 차리기";
+            foodBtn.className = "button";
+            foodBtn.onclick = () => showFood(input.value);
+            messageBox.appendChild(input);
+            messageBox.appendChild(foodBtn);
+          };
+          messageBox.appendChild(blowBtn);
+        }, 5000); // 5초 후 케이크 노출
+      }, 3000); // 3초 후 생일축하 메시지
     }
 
     function showFood(food) {
-      const img = document.createElement("img");
-      img.src = `https://source.unsplash.com/300x200/?${food}`;
-      img.style.marginTop = "10px";
-      messageBox.innerHTML = `짜잔! ${food} 생일상이 도착했습니다!`;
-
-      // 장소별 웃긴 멘트 추가
       setTimeout(() => {
+        foodImage.src = `https://source.unsplash.com/250x200/?${food}`;
+        foodImage.style.display = "block";
+        messageBox.innerHTML = `짜잔! ${food} 생일상이 도착했습니다!`;
+
+        // 장소별 웃긴 멘트 추가
         messageBox.innerHTML += `<br><b>선택한 장소에서 웃긴 멘트:</b> ${places[food] ? places[food].message : "이곳은 아직 비어있습니다!"}`;
-      }, 2000);
-      
-      messageBox.appendChild(img);
 
-      // 처음으로 돌아가기 버튼
-      setTimeout(() => {
-        const restartBtn = document.createElement("button");
-        restartBtn.innerText = "처음으로 돌아가기";
-        restartBtn.className = "button";
-        restartBtn.onclick = () => restart();
-        messageBox.appendChild(restartBtn);
-      }, 3000);
+        // 처음으로 돌아가기 버튼
+        setTimeout(() => {
+          const restartBtn = document.createElement("button");
+          restartBtn.innerText = "처음으로 돌아가기";
+          restartBtn.className = "button";
+          restartBtn.onclick = () => restart();
+          messageBox.appendChild(restartBtn);
+        }, 2000); // 2초 후 처음으로 돌아가기 버튼
+      }, 2000); // 2초 후 음식 이미지 표시
     }
 
     function restart() {
@@ -237,7 +246,7 @@
       // 게임 시작 전 상태로 초기화
       setTimeout(() => {
         location.reload();
-      }, 2000);
+      }, 2000); // 2초 후 새로 고침
     }
   </script>
 </body>
