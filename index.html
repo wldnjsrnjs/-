@@ -1,185 +1,200 @@
-<!DOCTYPE html>
-<html lang="ko">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>일찍 자면 안돼지</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #001f3f;
-      color: #fff;
-      text-align: center;
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: black;
+      color: white;
+      text-align: center;
+      overflow: hidden;
     }
-
-    .step {
-      display: none;
-      padding: 30px;
-      transition: all 1s ease-in-out;
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
     }
-
-    .visible {
-      display: block;
+    #banner {
+      font-size: 2em;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      margin-top: 100px;
+      animation: pop 1s ease-in-out;
     }
-
-    h1.bounce {
-      font-size: 3em;
-      color: #ffd700;
-      text-shadow: 0 0 10px white;
-      animation: bounce 1s infinite;
+    @keyframes pop {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
-
-    .subtitle {
-      font-size: 1.4em;
-      color: #ffccff;
-      margin: 20px 0;
-    }
-
-    .button-group button {
-      margin: 8px;
-      padding: 12px 24px;
-      font-size: 1em;
+    button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      margin: 10px;
       cursor: pointer;
-      background: #ff69b4;
+      background-color: #ff4081;
       color: white;
       border: none;
       border-radius: 10px;
-      transition: background 0.3s;
+      transition: transform 0.2s;
     }
-
-    .button-group button:hover {
-      background: #ff1493;
+    button:hover {
+      transform: scale(1.1);
     }
-
-    img {
-      max-width: 250px;
-      margin: 10px auto;
-      display: block;
-      border-radius: 15px;
-    }
-
-    #foodResult img {
+    #friend-img {
       width: 200px;
-      border: 3px solid #fff;
+      border-radius: 10px;
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
     }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .hat {
+      width: 100px;
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
     }
-
-    .fadein {
-      animation: fadein 1s ease-in-out;
+    #cake {
+      width: 150px;
+      margin: 20px auto 0;
     }
-
-    @keyframes fadein {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    #speech {
+      position: absolute;
+      bottom: 200px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255,255,255,0.8);
+      color: black;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
     }
   </style>
 </head>
 <body>
   <div id="game-container">
-    <div id="step1" class="step visible">
-      <h1 class="bounce">생일 축하, 안돼지!</h1>
-      <p class="subtitle">지금 바로 <b>무료 해외 여행</b>을 떠나보세요!!</p>
-      <p>먼저 생일 머리띠부터 골라주세요!</p>
-      <div class="button-group">
-        <button onclick="selectHeadband(0)">머리띠 1</button>
-        <button onclick="selectHeadband(1)">머리띠 2</button>
-        <button onclick="selectHeadband(2)">머리띠 3</button>
-      </div>
-    </div>
+    <div id="banner">생일 축하, 안돼지! 지금 바로 무료 해외여행을 떠나보세요!!</div>
+    <button onclick="startGame()">게임 시작</button>
+  </div>  <script>
+    const gameContainer = document.getElementById("game-container");
+    let friendImg, hatImg, cakeImg;
 
-    <div id="step2" class="step">
-      <p>생일 파티 장소를 골라주세요!</p>
-      <div class="button-group">
-        <button onclick="selectPlace('library')">도서관</button>
-        <button onclick="selectPlace('beach')">해변</button>
-        <button onclick="selectPlace('study')">스터디카페</button>
-        <button onclick="selectPlace('cabin')">오두막</button>
-      </div>
-    </div>
-
-    <div id="step3" class="step">
-      <p>5초짜리 생일 축하 노래가 재생됩니다!</p>
-      <audio id="birthday-audio" src="song.mp3" autoplay></audio>
-      <p>노래가 끝나면 촛불을 끌 수 있어요!</p>
-    </div>
-
-    <div id="step4" class="step">
-      <p>아래 생일 케이크의 촛불을 꺼보세요!</p>
-      <img src="cake.png" id="cake" alt="케이크" />
-      <button onclick="blowCandle()">촛불 끄기</button>
-    </div>
-
-    <div id="step5" class="step">
-      <p>먹고 싶은 생일 음식을 입력하세요!</p>
-      <input type="text" id="foodInput" placeholder="예: 초밥, 피자" />
-      <button onclick="showFood()">생일상 차리기</button>
-      <div id="foodResult"></div>
-    </div>
-
-    <div id="finalScene" class="step">
-      <img src="friend.png" alt="친구 이미지" />
-      <p id="funnyMessage">...</p>
-      <p>도서관에서 파티하다가 사서 선생님한테 혼났습니다!</p>
-      <p>하지만 최고의 생일이었어요, 안돼지!</p>
-    </div>
-  </div>
-
-  <script>
-    let currentStep = 1;
-
-    function goToNextStep() {
-      document.getElementById("step" + currentStep).classList.remove("visible");
-      currentStep++;
-      document.getElementById("step" + currentStep).classList.add("visible");
+    function startGame() {
+      gameContainer.innerHTML = "<h2>어디로 여행가고 싶나요?</h2>";
+      const places = ["도서관", "바닷가", "스터디카페", "오두막"];
+      places.forEach(place => {
+        const btn = document.createElement("button");
+        btn.innerText = place;
+        btn.onclick = () => choosePlace(place);
+        gameContainer.appendChild(btn);
+      });
     }
 
-    function selectHeadband(index) {
-      alert("머리띠 " + (index + 1) + " 선택 완료! 빛나는 안돼지!");
-      goToNextStep();
+    function choosePlace(place) {
+      let bg = {
+        "도서관": "library.png",
+        "바닷가": "beach.png",
+        "스터디카페": "study.png",
+        "오두막": "hut.png"
+      }[place];
+
+      gameContainer.style.backgroundImage = `url('${bg}')`;
+      gameContainer.innerHTML = `<h2>${place} 도착! </h2>`;
+      const funny = {
+        "도서관": "조용히 해주세요... 생일도 좋지만 책이 먼저입니다.",
+        "바닷가": "모래 위에 해피버스데이! 상상만 해도 신나죠?",
+        "스터디카페": "시험기간에도 생일은 못 참지!",
+        "오두막": "와... 산 속 파티라니 고요하지만 생일은 열정적으로!"
+      }[place];
+
+      const speech = document.createElement("div");
+      speech.id = "speech";
+      speech.innerText = funny;
+      speech.style.display = "block";
+
+      gameContainer.appendChild(speech);
+
+      friendImg = document.createElement("img");
+      friendImg.src = "friend.png";
+      friendImg.id = "friend-img";
+      gameContainer.appendChild(friendImg);
+
+      selectHat();
     }
 
-    function selectPlace(place) {
-      alert("장소 선택: " + place + "! 파티 준비 중...");
-      document.body.style.backgroundImage = `url('${place}.jpg')`;
-      document.body.style.backgroundSize = 'cover';
-      goToNextStep();
-
-      const audio = document.getElementById("birthday-audio");
-      if (audio) {
-        audio.onended = () => {
-          goToNextStep();
-        };
+    function selectHat() {
+      gameContainer.innerHTML += "<h2>생일 머리띠를 골라보세요!</h2>";
+      for (let i = 1; i <= 3; i++) {
+        const btn = document.createElement("button");
+        btn.innerText = `머리띠 ${i}`;
+        btn.onclick = () => addHat(i);
+        gameContainer.appendChild(btn);
       }
     }
 
-    function blowCandle() {
-      alert("촛불이 꺼졌어요! 폭죽 팡팡!");
-      goToNextStep();
-    }
-
-    function showFood() {
-      const food = document.getElementById("foodInput").value;
-      const result = document.getElementById("foodResult");
-      result.innerHTML = "";
-
-      const img = document.createElement("img");
-      img.src = "food.jpg"; // 실제로는 AI 이미지 생성이나 여러 음식 이미지로 확장 가능
-      img.alt = food;
-      result.appendChild(img);
+    function addHat(num) {
+      if (hatImg) hatImg.remove();
+      hatImg = document.createElement("img");
+      hatImg.src = `headband${num}.png`;
+      hatImg.className = "hat";
+      gameContainer.appendChild(hatImg);
 
       setTimeout(() => {
-        document.getElementById("funnyMessage").innerText =
-          "입력한 음식: " + food + " (먹다가 입천장 데었어요!)";
-        goToNextStep();
-      }, 2000);
+        playSong();
+      }, 1000);
     }
-  </script>
-</body>
+
+    function playSong() {
+      const audio = new Audio("song.mp3");
+      audio.play();
+      setTimeout(() => {
+        showCake();
+      }, 5000);
+    }
+
+    function showCake() {
+      gameContainer.innerHTML += "<h2>촛불을 꺼주세요!</h2>";
+      cakeImg = document.createElement("img");
+      cakeImg.src = "cake.png";
+      cakeImg.id = "cake";
+      gameContainer.appendChild(cakeImg);
+
+      const btn = document.createElement("button");
+      btn.innerText = "후~ 촛불 끄기!";
+      btn.onclick = blowCandle;
+      gameContainer.appendChild(btn);
+    }
+
+    function blowCandle() {
+      cakeImg.src = "cake.png";
+      alert("폭죽 팡팡!! 생일 축하해 안돼지!");
+      chooseFood();
+    }
+
+    function chooseFood() {
+      gameContainer.innerHTML += `<h2>먹고 싶은 음식을 입력하세요!</h2>`;
+      const input = document.createElement("input");
+      input.placeholder = "예: 김치볶음밥";
+      gameContainer.appendChild(input);
+
+      const btn = document.createElement("button");
+      btn.innerText = "생일상 차리기!";
+      btn.onclick = () => showFood(input.value);
+      gameContainer.appendChild(btn);
+    }
+
+    function showFood(food) {
+      gameContainer.innerHTML += `<p>안돼지를 위한 ${food} 생일상!</p>`;
+      const foodImg = document.createElement("img");
+      foodImg.src = "food.png";
+      foodImg.style.width = "200px";
+      gameContainer.appendChild(foodImg);
+    }
+  </script></body>
 </html>
