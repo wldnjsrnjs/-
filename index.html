@@ -33,32 +33,27 @@
       z-index: 10;
     }
     .button {
-      margin-top: 20px;
+      margin: 10px;
       padding: 10px 20px;
       font-size: 1em;
       border-radius: 10px;
       border: none;
       cursor: pointer;
     }
-    #friend {
+    #friend, #headband {
       position: absolute;
-      bottom: 20%;
+      bottom: 15%;
       left: 50%;
       transform: translateX(-50%);
-      width: 200px;
       transition: transform 1s ease;
+      z-index: 5;
+    }
+    #friend {
+      width: 200px;
     }
     #headband {
-      position: absolute;
-      bottom: 42%;
-      left: 50%;
-      transform: translateX(-50%);
       width: 120px;
-      transition: transform 1s ease;
-      z-index: 3;
-    }
-    .hidden {
-      display: none;
+      margin-bottom: 180px;
     }
     #message {
       position: absolute;
@@ -90,6 +85,10 @@
       display: none;
       z-index: 20;
     }
+    input {
+      margin-top: 10px;
+      padding: 5px;
+    }
   </style>
 </head>
 <body>
@@ -100,17 +99,16 @@
       <button class="button" onclick="showPlaces()">여행 떠나기</button>
     </div>
     <div id="message" class="hidden"></div>
-    <img id="friend" src="friend.png">
+    <img id="friend" src="friend.png" class="hidden">
     <img id="headband" class="hidden" src="">
     <img id="cake" src="cake.png">
     <div id="explosion"></div>
     <audio id="song" src="song.mp3"></audio>
-  </div>
-  <script>
+  </div>  <script>
     const places = {
       "도서관": {
         image: "library.png",
-        message: "쉿! 여긴 도서관입니다. 사서 선생님: "조용히 해 주세요!!"
+        message: "쉿! 여긴 도서관입니다. 사서 선생님: \"조용히 해 주세요!!\""
       },
       "바닷가": {
         image: "beach.png",
@@ -124,88 +122,90 @@
         image: "hut.png",
         message: "이 외딴 곳에서 생일이라니… 너무 로맨틱해!"
       }
-    };const container = document.getElementById("container");
-const messageBox = document.getElementById("message");
-const headband = document.getElementById("headband");
-const friend = document.getElementById("friend");
-const cake = document.getElementById("cake");
-const explosion = document.getElementById("explosion");
-const song = document.getElementById("song");
-
-function showPlaces() {
-  document.getElementById("startBanner").classList.add("hidden");
-  messageBox.classList.remove("hidden");
-  messageBox.innerHTML = "생일파티 장소를 선택하세요!";
-  Object.keys(places).forEach(place => {
-    const btn = document.createElement("button");
-    btn.innerText = place;
-    btn.className = "button";
-    btn.onclick = () => selectPlace(place);
-    messageBox.appendChild(btn);
-  });
-}
-
-function selectPlace(place) {
-  container.style.backgroundImage = `url('${places[place].image}')`;
-  messageBox.innerText = places[place].message;
-  friend.style.transform = "translateX(-50%) translateY(-10px)";
-  headband.classList.remove("hidden");
-  setTimeout(() => chooseHeadband(), 1000);
-}
-
-function chooseHeadband() {
-  messageBox.innerHTML = "머리띠를 골라주세요!";
-  for (let i = 1; i <= 3; i++) {
-    const btn = document.createElement("button");
-    btn.innerText = `머리띠 ${i}`;
-    btn.className = "button";
-    btn.onclick = () => {
-      headband.src = `headband${i}.png`;
-      showCake();
     };
-    messageBox.appendChild(btn);
-  }
-}
 
-function showCake() {
-  messageBox.innerHTML = "5초간 생일축하 노래 후 촛불을 불어주세요!";
-  const stopBtn = document.createElement("button");
-  stopBtn.innerText = "노래 중지";
-  stopBtn.className = "button";
-  stopBtn.onclick = () => song.pause();
-  messageBox.appendChild(stopBtn);
-  song.play();
-  setTimeout(() => {
-    cake.style.display = "block";
-    const blowBtn = document.createElement("button");
-    blowBtn.innerText = "촛불 끄기";
-    blowBtn.className = "button";
-    blowBtn.onclick = () => {
-      cake.style.display = "none";
-      explosion.style.display = "block";
-      setTimeout(() => explosion.style.display = "none", 2000);
-      messageBox.innerHTML = "음식을 입력해주세요!";
-      const input = document.createElement("input");
-      input.placeholder = "먹고 싶은 음식 입력";
-      const btn = document.createElement("button");
-      btn.innerText = "생일상 차리기";
-      btn.className = "button";
-      btn.onclick = () => showFood(input.value);
-      messageBox.appendChild(input);
-      messageBox.appendChild(btn);
-    };
-    messageBox.appendChild(blowBtn);
-  }, 5000);
-}
+    const container = document.getElementById("container");
+    const messageBox = document.getElementById("message");
+    const headband = document.getElementById("headband");
+    const friend = document.getElementById("friend");
+    const cake = document.getElementById("cake");
+    const explosion = document.getElementById("explosion");
+    const song = document.getElementById("song");
 
-function showFood(food) {
-  const img = document.createElement("img");
-  img.src = `https://source.unsplash.com/300x200/?${food}`;
-  img.style.marginTop = "10px";
-  messageBox.innerHTML = `짜잔! ${food} 생일상이 도착했습니다!`;
-  messageBox.appendChild(img);
-}
+    function showPlaces() {
+      document.getElementById("startBanner").style.display = "none";
+      messageBox.classList.remove("hidden");
+      messageBox.innerHTML = "생일파티 장소를 선택하세요!";
+      Object.keys(places).forEach(place => {
+        const btn = document.createElement("button");
+        btn.innerText = place;
+        btn.className = "button";
+        btn.onclick = () => selectPlace(place);
+        messageBox.appendChild(btn);
+      });
+    }
 
-  </script>
-</body>
+    function selectPlace(place) {
+      container.style.backgroundImage = `url('${places[place].image}')`;
+      messageBox.innerText = places[place].message;
+      friend.classList.remove("hidden");
+      headband.classList.add("hidden");
+      friend.style.transform = "translateX(-50%) translateY(-10px)";
+      setTimeout(() => chooseHeadband(), 1500);
+    }
+
+    function chooseHeadband() {
+      messageBox.innerHTML = "머리띠를 골라주세요!";
+      for (let i = 1; i <= 3; i++) {
+        const btn = document.createElement("button");
+        btn.innerText = `머리띠 ${i}`;
+        btn.className = "button";
+        btn.onclick = () => {
+          headband.src = `headband${i}.png`;
+          headband.classList.remove("hidden");
+          showCake();
+        };
+        messageBox.appendChild(btn);
+      }
+    }
+
+    function showCake() {
+      messageBox.innerHTML = "생일축하 노래를 듣고 촛불을 꺼보세요!";
+      const stopBtn = document.createElement("button");
+      stopBtn.innerText = "노래 중지";
+      stopBtn.className = "button";
+      stopBtn.onclick = () => song.pause();
+      messageBox.appendChild(stopBtn);
+      song.play();
+      setTimeout(() => {
+        cake.style.display = "block";
+        const blowBtn = document.createElement("button");
+        blowBtn.innerText = "촛불 끄기";
+        blowBtn.className = "button";
+        blowBtn.onclick = () => {
+          cake.style.display = "none";
+          explosion.style.display = "block";
+          setTimeout(() => explosion.style.display = "none", 2000);
+          messageBox.innerHTML = "먹고 싶은 음식을 입력하세요!";
+          const input = document.createElement("input");
+          input.placeholder = "예: 삼겹살, 초밥 등";
+          const foodBtn = document.createElement("button");
+          foodBtn.innerText = "생일상 차리기";
+          foodBtn.className = "button";
+          foodBtn.onclick = () => showFood(input.value);
+          messageBox.appendChild(input);
+          messageBox.appendChild(foodBtn);
+        };
+        messageBox.appendChild(blowBtn);
+      }, 5000);
+    }
+
+    function showFood(food) {
+      const img = document.createElement("img");
+      img.src = `https://source.unsplash.com/300x200/?${food}`;
+      img.style.marginTop = "10px";
+      messageBox.innerHTML = `짜잔! ${food} 생일상이 도착했습니다!`;
+      messageBox.appendChild(img);
+    }
+  </script></body>
 </html>
