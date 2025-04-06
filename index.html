@@ -188,25 +188,9 @@
     const foodImage = document.getElementById("foodImage");
     const startButton = document.getElementById("startButton");
 
-    startButton.addEventListener("click", showPlaces);
-
-    function showPlaces() {
-      document.getElementById("startBanner").style.display = "none";
-      messageBox.innerHTML = "생일파티 장소를 선택하세요!";
-      Object.keys(places).forEach(place => {
-        const btn = createButton(place);
-        messageBox.appendChild(btn);
-      });
-    }
-
-    function createButton(place) {
-      const btn = document.createElement("button");
-      btn.innerText = place;
-      btn.className = "button";
-      btn.onclick = () => selectPlace(place);
-      btn.disabled = false;
-      return btn;
-    }
+    startButton.addEventListener("click", function() {
+      selectPlace("도서관");  // 여행 떠나기 버튼 클릭 시 기본 장소로 '도서관' 선택
+    });
 
     function selectPlace(place) {
       container.style.backgroundImage = `url('${places[place].image}')`;
@@ -251,4 +235,37 @@
             messageBox.innerHTML = "먹고 싶은 음식을 입력하세요!";
             const input = document.createElement("input");
             input.placeholder = "예: 삼겹살, 초밥 등";
-            const foodBtn = document.createElement
+            const foodBtn = document.createElement("button");
+            foodBtn.innerText = "검색";
+            foodBtn.className = "button";
+            foodBtn.onclick = searchImage;
+            messageBox.appendChild(input);
+            messageBox.appendChild(foodBtn);
+          };
+          messageBox.appendChild(blowBtn);
+        }, 5000);
+      }, 3000);
+    }
+
+    async function searchImage() {
+      const foodName = document.getElementById("foodInput").value;
+      if (!foodName) {
+        alert("음식 이름을 입력해주세요!");
+        return;
+      }
+      
+      // 로딩 메시지 보이기
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("foodImage").style.display = "none";
+      
+      try {
+        const apiKey = 'AIzaSyDtVwNW5FgG1Dmi0PCcKFMn5qP6alZqYFE';  
+        const cx = '64d91bb6fe3bc4dfa';    
+        const url = `https://www.googleapis.com/customsearch/v1?q=${foodName}&searchType=image&key=${apiKey}&cx=${cx}`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.items && data.items.length > 0) {
+          const imageUrl = data.items[0].link;
+          document.getElementById("foodImage").src = imageUrl;
