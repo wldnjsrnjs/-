@@ -5,7 +5,6 @@
   <title>일찍 자면 안돼지</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* 기본 스타일 */
     body {
       margin: 0;
       padding: 0;
@@ -28,7 +27,7 @@
       top: 10%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255,255,255,0.8);
       color: #000;
       padding: 20px;
       border-radius: 20px;
@@ -73,7 +72,7 @@
       top: 5%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255,255,255,0.9);
       color: #000;
       padding: 10px;
       border-radius: 10px;
@@ -89,7 +88,7 @@
       display: none;
       z-index: 10;
     }
-    /* 폭죽 효과 (CSS 애니메이션) */
+    /* 폭죽 효과 (이미지 없이 CSS로 구현) */
     #explosion {
       position: absolute;
       top: 0;
@@ -111,7 +110,7 @@
         opacity: 0;
       }
     }
-    /* 별 효과 (CSS 애니메이션) */
+    /* 별 효과 (이미지 없이 CSS로 구현) */
     #starryBackground {
       position: absolute;
       top: 0;
@@ -240,7 +239,9 @@
         messageBox.innerHTML = "생일파티 장소를 선택하세요!";
         Object.keys(placesData).forEach(place => {
           const btn = createButton(place);
-          btn.addEventListener("click", () => selectPlace(place));
+          btn.addEventListener("click", function() {
+            selectPlace(place);
+          });
           messageBox.appendChild(btn);
         });
       }
@@ -265,7 +266,7 @@
         messageBox.innerHTML = "머리띠를 골라주세요!";
         for (let i = 1; i <= 3; i++) {
           const btn = createButton(`머리띠 ${i}`);
-          btn.addEventListener("click", () => {
+          btn.addEventListener("click", function() {
             headband.src = `headband${i}.png`;
             headband.style.opacity = 1;
             showCake();
@@ -278,27 +279,37 @@
         setTimeout(() => {
           messageBox.innerHTML = "생일축하 노래를 듣고 촛불을 꺼보세요!";
           const stopBtn = createButton("노래 중지");
-          stopBtn.addEventListener("click", () => song.pause());
+          stopBtn.addEventListener("click", function() {
+            song.pause();
+          });
           messageBox.appendChild(stopBtn);
           song.play();
           setTimeout(() => {
             cake.style.display = "block";
             const blowBtn = createButton("촛불 끄기");
-            blowBtn.addEventListener("click", () => {
+            blowBtn.addEventListener("click", function() {
               cake.style.display = "none";
               // 폭죽 효과 실행
               explosion.style.display = "block";
-              setTimeout(() => { explosion.style.display = "none"; }, 2000);
+              setTimeout(() => {
+                explosion.style.display = "none";
+              }, 2000);
               // 별 효과 실행
               starryBackground.style.display = "block";
-              setTimeout(() => { starryBackground.style.display = "none"; }, 5000);
-              // 음식 검색 영역 보이기
-              foodSearch.classList.remove("hidden");
-              messageBox.innerHTML = "";
+              setTimeout(() => {
+                starryBackground.style.display = "none";
+              }, 5000);
+              // 음식 검색 영역 보이기 (생일상 차리는 장면)
+              showFoodSearch();
             });
             messageBox.appendChild(blowBtn);
           }, 5000);
         }, 3000);
+      }
+
+      function showFoodSearch() {
+        foodSearch.style.display = "block";
+        messageBox.innerHTML = "먹고 싶은 음식을 입력하세요!";
       }
 
       async function searchImage() {
@@ -310,7 +321,6 @@
         document.getElementById("loading").style.display = "block";
         foodImage.style.display = "none";
         try {
-          // 구글 Custom Search API 호출
           const apiKey = 'AIzaSyDtVwNW5FgG1Dmi0PCcKFMn5qP6alZqYFE';
           const cx = '64d91bb6fe3bc4dfa';
           const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(foodName)}&searchType=image&key=${apiKey}&cx=${cx}`;
@@ -331,7 +341,9 @@
           document.getElementById("loading").style.display = "none";
           setTimeout(() => {
             const restartBtn = createButton("다시 시작하기");
-            restartBtn.addEventListener("click", () => location.reload());
+            restartBtn.addEventListener("click", function() {
+              location.reload();
+            });
             messageBox.appendChild(restartBtn);
           }, 3000);
         }
