@@ -5,6 +5,7 @@
   <title>일찍 자면 안돼지</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* 기본 스타일 */
     body {
       margin: 0;
       padding: 0;
@@ -27,7 +28,7 @@
       top: 10%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255,255,255,0.8);
+      background: rgba(255, 255, 255, 0.8);
       color: #000;
       padding: 20px;
       border-radius: 20px;
@@ -72,7 +73,7 @@
       top: 5%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255,255,255,0.9);
+      background: rgba(255, 255, 255, 0.9);
       color: #000;
       padding: 10px;
       border-radius: 10px;
@@ -88,7 +89,7 @@
       display: none;
       z-index: 10;
     }
-    /* 폭죽 효과 (이미지 없이 CSS로 구현) */
+    /* 폭죽 효과 (CSS 애니메이션) */
     #explosion {
       position: absolute;
       top: 0;
@@ -110,7 +111,7 @@
         opacity: 0;
       }
     }
-    /* 별 효과 (이미지 없이 CSS로 구현) */
+    /* 별 효과 (CSS 애니메이션) */
     #starryBackground {
       position: absolute;
       top: 0;
@@ -194,110 +195,148 @@
   </div>
 
   <script>
-    // 장소 데이터 (모든 이미지 확장자는 .png)
-    const places = {
-      "도서관": {
-        image: "library.png",
-        message: "쉿! 여긴 도서관입니다. 사서 선생님: \"조용히 해 주세요!!\"",
-        duration: 4000
-      },
-      "바닷가": {
-        image: "beach.png",
-        message: "비키니는 없지만 웃음은 있어요. 파티가 시작됩니다!",
-        duration: 5000
-      },
-      "스터디카페": {
-        image: "study.png",
-        message: "공부하러 왔니? 아니 생일파티 하러 왔다고!",
-        duration: 6000
-      },
-      "오두막": {
-        image: "hut.png",
-        message: "이 외딴 곳에서 생일이라니… 너무 로맨틱해!",
-        duration: 7000
+    document.addEventListener('DOMContentLoaded', function() {
+      // 장소 데이터 (모든 이미지 확장자는 .png)
+      const placesData = {
+        "도서관": {
+          image: "library.png",
+          message: "쉿! 여긴 도서관입니다. 사서 선생님: \"조용히 해 주세요!!\"",
+          duration: 4000
+        },
+        "바닷가": {
+          image: "beach.png",
+          message: "비키니는 없지만 웃음은 있어요. 파티가 시작됩니다!",
+          duration: 5000
+        },
+        "스터디카페": {
+          image: "study.png",
+          message: "공부하러 왔니? 아니 생일파티 하러 왔다고!",
+          duration: 6000
+        },
+        "오두막": {
+          image: "hut.png",
+          message: "이 외딴 곳에서 생일이라니… 너무 로맨틱해!",
+          duration: 7000
+        }
+      };
+
+      const container = document.getElementById("container");
+      const messageBox = document.getElementById("message");
+      const headband = document.getElementById("headband");
+      const friend = document.getElementById("friend");
+      const cake = document.getElementById("cake");
+      const explosion = document.getElementById("explosion");
+      const starryBackground = document.getElementById("starryBackground");
+      const song = document.getElementById("song");
+      const foodImage = document.getElementById("foodImage");
+      const startButton = document.getElementById("startButton");
+      const foodSearch = document.getElementById("foodSearch");
+
+      // "여행 떠나기" 버튼 클릭 시 장소 선택 화면 보이기
+      startButton.addEventListener("click", showPlaces);
+
+      function showPlaces() {
+        document.getElementById("startBanner").style.display = "none";
+        messageBox.innerHTML = "생일파티 장소를 선택하세요!";
+        Object.keys(placesData).forEach(place => {
+          const btn = createButton(place);
+          btn.addEventListener("click", () => selectPlace(place));
+          messageBox.appendChild(btn);
+        });
       }
-    };
 
-    const container = document.getElementById("container");
-    const messageBox = document.getElementById("message");
-    const headband = document.getElementById("headband");
-    const friend = document.getElementById("friend");
-    const cake = document.getElementById("cake");
-    const explosion = document.getElementById("explosion");
-    const starryBackground = document.getElementById("starryBackground");
-    const song = document.getElementById("song");
-    const foodImage = document.getElementById("foodImage");
-    const startButton = document.getElementById("startButton");
-    const foodSearch = document.getElementById("foodSearch");
-
-    // "여행 떠나기" 버튼 클릭 시 4개의 장소 중 선택하도록 보이기
-    startButton.addEventListener("click", showPlaces);
-
-    function showPlaces() {
-      document.getElementById("startBanner").style.display = "none";
-      messageBox.innerHTML = "생일파티 장소를 선택하세요!";
-      Object.keys(places).forEach(place => {
-        const btn = createButton(place);
-        btn.onclick = () => selectPlace(place);
-        messageBox.appendChild(btn);
-      });
-    }
-
-    function createButton(label) {
-      const btn = document.createElement("button");
-      btn.innerText = label;
-      btn.className = "button";
-      return btn;
-    }
-
-    function selectPlace(place) {
-      container.style.backgroundImage = `url('${places[place].image}')`;
-      messageBox.innerText = places[place].message;
-      friend.style.opacity = 1;
-      headband.style.opacity = 0;
-      friend.style.transform = "translateX(-50%) translateY(-10px)";
-      setTimeout(() => chooseHeadband(), places[place].duration);
-    }
-
-    function chooseHeadband() {
-      messageBox.innerHTML = "머리띠를 골라주세요!";
-      for (let i = 1; i <= 3; i++) {
-        const btn = createButton(`머리띠 ${i}`);
-        btn.onclick = () => {
-          headband.src = `headband${i}.png`;
-          headband.style.opacity = 1;
-          showCake();
-        };
-        messageBox.appendChild(btn);
+      function createButton(label) {
+        const btn = document.createElement("button");
+        btn.innerText = label;
+        btn.className = "button";
+        return btn;
       }
-    }
 
-    function showCake() {
-      setTimeout(() => {
-        messageBox.innerHTML = "생일축하 노래를 듣고 촛불을 꺼보세요!";
-        const stopBtn = createButton("노래 중지");
-        stopBtn.onclick = () => song.pause();
-        messageBox.appendChild(stopBtn);
-        song.play();
+      function selectPlace(place) {
+        container.style.backgroundImage = `url('${placesData[place].image}')`;
+        messageBox.innerText = placesData[place].message;
+        friend.style.opacity = 1;
+        headband.style.opacity = 0;
+        friend.style.transform = "translateX(-50%) translateY(-10px)";
+        setTimeout(() => chooseHeadband(), placesData[place].duration);
+      }
+
+      function chooseHeadband() {
+        messageBox.innerHTML = "머리띠를 골라주세요!";
+        for (let i = 1; i <= 3; i++) {
+          const btn = createButton(`머리띠 ${i}`);
+          btn.addEventListener("click", () => {
+            headband.src = `headband${i}.png`;
+            headband.style.opacity = 1;
+            showCake();
+          });
+          messageBox.appendChild(btn);
+        }
+      }
+
+      function showCake() {
         setTimeout(() => {
-          cake.style.display = "block";
-          const blowBtn = createButton("촛불 끄기");
-          blowBtn.onclick = () => {
-            cake.style.display = "none";
-            // 폭죽 효과
-            explosion.style.display = "block";
-            setTimeout(() => explosion.style.display = "none", 2000);
-            // 별 효과
-            starryBackground.style.display = "block";
-            setTimeout(() => starryBackground.style.display = "none", 5000);
-            // 음식 검색 영역 보이기
-            foodSearch.style.display = "block";
-            messageBox.innerHTML = "";
-          };
-          messageBox.appendChild(blowBtn);
-        }, 5000);
-      }, 3000);
-    }
+          messageBox.innerHTML = "생일축하 노래를 듣고 촛불을 꺼보세요!";
+          const stopBtn = createButton("노래 중지");
+          stopBtn.addEventListener("click", () => song.pause());
+          messageBox.appendChild(stopBtn);
+          song.play();
+          setTimeout(() => {
+            cake.style.display = "block";
+            const blowBtn = createButton("촛불 끄기");
+            blowBtn.addEventListener("click", () => {
+              cake.style.display = "none";
+              // 폭죽 효과 실행
+              explosion.style.display = "block";
+              setTimeout(() => { explosion.style.display = "none"; }, 2000);
+              // 별 효과 실행
+              starryBackground.style.display = "block";
+              setTimeout(() => { starryBackground.style.display = "none"; }, 5000);
+              // 음식 검색 영역 보이기
+              foodSearch.classList.remove("hidden");
+              messageBox.innerHTML = "";
+            });
+            messageBox.appendChild(blowBtn);
+          }, 5000);
+        }, 3000);
+      }
 
-    async function searchImage() {
-      const foodName = document.getElementById("
+      async function searchImage() {
+        const foodName = document.getElementById("foodInput").value;
+        if (!foodName) {
+          alert("음식 이름을 입력해주세요!");
+          return;
+        }
+        document.getElementById("loading").style.display = "block";
+        foodImage.style.display = "none";
+        try {
+          // 구글 Custom Search API 호출
+          const apiKey = 'AIzaSyDtVwNW5FgG1Dmi0PCcKFMn5qP6alZqYFE';
+          const cx = '64d91bb6fe3bc4dfa';
+          const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(foodName)}&searchType=image&key=${apiKey}&cx=${cx}`;
+          const response = await fetch(url);
+          const data = await response.json();
+          if (data.items && data.items.length > 0) {
+            const imageUrl = data.items[0].link;
+            foodImage.src = imageUrl;
+            foodImage.style.display = "block";
+            messageBox.innerHTML = `${foodName} 생일상이 도착했습니다!`;
+          } else {
+            messageBox.innerHTML = "이미지를 찾을 수 없습니다.";
+          }
+        } catch (error) {
+          console.error(error);
+          messageBox.innerHTML = "이미지 검색에 실패했습니다. 다시 시도해주세요.";
+        } finally {
+          document.getElementById("loading").style.display = "none";
+          setTimeout(() => {
+            const restartBtn = createButton("다시 시작하기");
+            restartBtn.addEventListener("click", () => location.reload());
+            messageBox.appendChild(restartBtn);
+          }, 3000);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
