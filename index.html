@@ -134,19 +134,23 @@
     const places = {
       "도서관": {
         image: "https://example.com/images/library.png",
-        message: "쉿! 여긴 도서관입니다. 사서 선생님: \"조용히 해 주세요!!\""
+        message: "쉿! 여긴 도서관입니다. 사서 선생님: \"조용히 해 주세요!!\"",
+        duration: 4000  // 4초 후에 다음 단계로 넘어감
       },
       "바닷가": {
         image: "https://example.com/images/beach.png",
-        message: "비키니는 없지만 웃음은 있어요. 파티가 시작됩니다!"
+        message: "비키니는 없지만 웃음은 있어요. 파티가 시작됩니다!",
+        duration: 5000  // 5초 후에 다음 단계로 넘어감
       },
       "스터디카페": {
         image: "https://example.com/images/study.png",
-        message: "공부하러 왔니? 아니 생일파티 하러 왔다고!"
+        message: "공부하러 왔니? 아니 생일파티 하러 왔다고!",
+        duration: 6000  // 6초 후에 다음 단계로 넘어감
       },
       "오두막": {
         image: "https://example.com/images/hut.png",
-        message: "이 외딴 곳에서 생일이라니… 너무 로맨틱해!"
+        message: "이 외딴 곳에서 생일이라니… 너무 로맨틱해!",
+        duration: 7000  // 7초 후에 다음 단계로 넘어감
       }
     };
 
@@ -187,7 +191,7 @@
       friend.classList.remove("hidden");
       headband.classList.add("hidden");
       friend.style.transform = "translateX(-50%) translateY(-10px)";
-      setTimeout(() => chooseHeadband(), 2000); // 2초 후 머리띠 선택
+      setTimeout(() => chooseHeadband(), places[place].duration);  // 장소별 대본 지속시간에 맞게 타이밍 설정
     }
 
     function chooseHeadband() {
@@ -244,4 +248,14 @@
 
         // 처음으로 돌아가기 버튼
         setTimeout(() => {
-          const restartBtn = document.create
+          const restartBtn = document.createElement("button");
+          restartBtn.innerText = "다시 시작하기";
+          restartBtn.className = "button";
+          restartBtn.onclick = () => location.reload();
+          messageBox.appendChild(restartBtn);
+        }, 3000);
+      }, 2000);  // 음식 이미지를 2초 후에 표시
+    }
+  </script>
+</body>
+</html>
