@@ -247,7 +247,6 @@
       const btn = document.createElement("button");
       btn.innerText = label;
       btn.className = "button";
-      btn.disabled = false;
       return btn;
     }
 
@@ -307,4 +306,7 @@
         return;
       }
       document.getElementById("loading").style.display = "block";
-      foodImage.style.display
+      foodImage.style.display = "none";
+      // 음식 이름을 검색하는 코드를 추가
+      setTimeout(() => {
+        document.getElementById("loading").style.display = "none
