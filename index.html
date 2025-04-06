@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>일찍 자면 안돼지</title>
   <style>
     body {
@@ -113,34 +114,22 @@
       display: none;
       z-index: 15;
     }
-    /* 폭죽 캔버스 스타일: UI와 겹치지 않도록 pointer-events 차단 */
-    #fireworksCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-      pointer-events: none;
-    }
-    /* 폭죽 버튼: 화면 오른쪽 아래에 고정 */
-    #fireworksButton {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      z-index: 30;
-      padding: 10px 20px;
-      font-size: 1em;
+    .input-box {
+      padding: 10px;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      width: 60%;
       border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      background-color: #ff4081;
-      color: #fff;
+      border: 1px solid #ccc;
     }
-    #fireworksButton:hover {
-      background-color: #e91e63;
+    #loading {
+      font-size: 1.2em;
+      color: #FF6347;
     }
   </style>
 </head>
 <body>
+
   <div id="container">
     <div class="banner" id="startBanner">
       생일 축하, 안돼지!<br>
@@ -153,37 +142,38 @@
     <img id="cake" src="cake.png">
     <div id="explosion"></div>
     <div class="starry-background" id="starryBackground"></div>
-    <img id="foodImage" src="" alt="Food Image">
+    <img id="foodImage" src="" alt="Food Image" style="display: none;">
     <audio id="song" src="song.mp3"></audio>
   </div>
 
-  <!-- 폭죽 버튼 (기존 UI와 겹치지 않도록 오른쪽 하단에 배치) -->
-  <button id="fireworksButton">나를 위한 폭죽 터뜨리기</button>
-  <!-- 폭죽 효과를 위한 캔버스 -->
-  <canvas id="fireworksCanvas"></canvas>
+  <div id="foodSearch">
+    <h1>음식 이미지를 검색하세요!</h1>
+    <input id="foodInput" class="input-box" type="text" placeholder="음식 이름을 입력하세요" />
+    <button class="button" onclick="searchImage()">이미지 검색</button>
+    <div id="loading" style="display: none;">이미지를 검색 중입니다...</div>
+  </div>
 
   <script>
-    // 기존 코드 시작
     const places = {
       "도서관": {
         image: "https://example.com/images/library.png",
         message: "쉿! 여긴 도서관입니다. 사서 선생님: \"조용히 해 주세요!!\"",
-        duration: 4000  // 4초 후에 다음 단계로 넘어감
+        duration: 4000
       },
       "바닷가": {
         image: "https://example.com/images/beach.png",
         message: "비키니는 없지만 웃음은 있어요. 파티가 시작됩니다!",
-        duration: 5000  // 5초 후에 다음 단계로 넘어감
+        duration: 5000
       },
       "스터디카페": {
         image: "https://example.com/images/study.png",
         message: "공부하러 왔니? 아니 생일파티 하러 왔다고!",
-        duration: 6000  // 6초 후에 다음 단계로 넘어감
+        duration: 6000
       },
       "오두막": {
         image: "https://example.com/images/hut.png",
         message: "이 외딴 곳에서 생일이라니… 너무 로맨틱해!",
-        duration: 7000  // 7초 후에 다음 단계로 넘어감
+        duration: 7000
       }
     };
 
@@ -214,17 +204,17 @@
       btn.innerText = place;
       btn.className = "button";
       btn.onclick = () => selectPlace(place);
-      btn.disabled = false;  // 버튼 비활성화 초기화
+      btn.disabled = false;
       return btn;
     }
 
     function selectPlace(place) {
       container.style.backgroundImage = `url('${places[place].image}')`;
       messageBox.innerText = places[place].message;
-      friend.style.opacity = 1;  // 친구 이미지가 부드럽게 나타나게 설정
+      friend.style.opacity = 1;
       headband.style.opacity = 0;
       friend.style.transform = "translateX(-50%) translateY(-10px)";
-      setTimeout(() => chooseHeadband(), places[place].duration);  // 장소별 대본 지속시간에 맞게 타이밍 설정
+      setTimeout(() => chooseHeadband(), places[place].duration);
     }
 
     function chooseHeadband() {
@@ -256,121 +246,9 @@
           blowBtn.className = "button";
           blowBtn.onclick = () => {
             cake.style.display = "none";
-            starryBackground.style.display = "block"; // 별이 떨어지는 배경
-            setTimeout(() => starryBackground.style.display = "none", 5000); // 5초 후 별 배경 사라짐
+            starryBackground.style.display = "block";
+            setTimeout(() => starryBackground.style.display = "none", 5000);
             messageBox.innerHTML = "먹고 싶은 음식을 입력하세요!";
             const input = document.createElement("input");
             input.placeholder = "예: 삼겹살, 초밥 등";
-            const foodBtn = document.createElement("button");
-            foodBtn.innerText = "생일상 차리기";
-            foodBtn.className = "button";
-            foodBtn.onclick = () => showFood(input.value);
-            messageBox.appendChild(input);
-            messageBox.appendChild(foodBtn);
-          };
-          messageBox.appendChild(blowBtn);
-        }, 5000); // 5초 후 케이크 노출
-      }, 3000); // 3초 후 생일축하 메시지
-    }
-
-    function showFood(food) {
-      setTimeout(() => {
-        foodImage.src = `https://source.unsplash.com/250x200/?${food}`;
-        foodImage.style.display = "block";
-        messageBox.innerHTML = `짜잔! ${food} 생일상이 도착했습니다!`;
-
-        // 처음으로 돌아가기 버튼
-        setTimeout(() => {
-          const restartBtn = document.createElement("button");
-          restartBtn.innerText = "다시 시작하기";
-          restartBtn.className = "button";
-          restartBtn.onclick = () => location.reload();
-          messageBox.appendChild(restartBtn);
-        }, 3000);
-      }, 2000);  // 음식 이미지를 2초 후에 표시
-    }
-    // 기존 코드 끝
-
-    // ---------------------------
-    // 폭죽 효과 추가 코드 시작
-    // 폭죽 캔버스 설정
-    const fireworksCanvas = document.getElementById('fireworksCanvas');
-    const ctx = fireworksCanvas.getContext('2d');
-    fireworksCanvas.width = window.innerWidth;
-    fireworksCanvas.height = window.innerHeight;
-
-    // 폭죽 효과 생성
-    let fireworks = [];
-
-    function Firework(x, y) {
-      this.x = x;
-      this.y = y;
-      this.size = Math.random() * 3 + 2;
-      this.color = 'hsl(' + Math.random() * 360 + ', 100%, 50%)';
-      this.speed = Math.random() * 5 + 2;
-      this.angle = Math.random() * Math.PI * 2;
-      this.alpha = 1;
-    }
-
-    Firework.prototype.update = function() {
-      this.x += Math.cos(this.angle) * this.speed;
-      this.y += Math.sin(this.angle) * this.speed;
-      this.alpha -= 0.02;
-      this.size -= 0.05;
-      if (this.alpha <= 0 || this.size <= 0) {
-        return false;
-      }
-      return true;
-    };
-
-    Firework.prototype.draw = function() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = this.color;
-      ctx.globalAlpha = this.alpha;
-      ctx.fill();
-    };
-
-    function createFirework() {
-      const x = Math.random() * fireworksCanvas.width;
-      const y = Math.random() * fireworksCanvas.height;
-      fireworks.push(new Firework(x, y));
-    }
-
-    function animateFireworks() {
-      ctx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
-      for (let i = fireworks.length - 1; i >= 0; i--) {
-        if (!fireworks[i].update()) {
-          fireworks.splice(i, 1);
-        }
-      }
-      for (let fw of fireworks) {
-        fw.draw();
-      }
-      requestAnimationFrame(animateFireworks);
-    }
-
-    function startFireworks() {
-      for (let i = 0; i < 100; i++) {
-        createFirework();
-      }
-    }
-
-    animateFireworks();
-    // 폭죽 효과 추가 코드 끝
-
-    // 폭죽 버튼 이벤트 (기존 UI와 겹치지 않도록 오른쪽 하단에 고정)
-    const fireworksButton = document.getElementById("fireworksButton");
-    fireworksButton.addEventListener("click", startFireworks);
-
-    // 창 크기 변경 시 캔버스 사이즈 업데이트
-    window.addEventListener("resize", () => {
-      fireworksCanvas.width = window.innerWidth;
-      fireworksCanvas.height = window.innerHeight;
-    });
-  </script>
-  
-  <!-- 폭죽 버튼: 화면 오른쪽 아래에 고정 -->
-  <button id="fireworksButton" class="button">폭죽 효과 보기</button>
-</body>
-</html>
+            const foodBtn = document.createElement
