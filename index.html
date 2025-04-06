@@ -86,15 +86,53 @@
       display: none;
       z-index: 10;
     }
+    /* 폭죽 효과 (이미지 없이 CSS로 구현) */
     #explosion {
       position: absolute;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: url('https://media.giphy.com/media/2gCxiHWwEZYz4g84qK/giphy.gif') center/cover no-repeat;
+      background: rgba(255, 69, 0, 0.6);
       display: none;
       z-index: 20;
+      animation: explode 1s ease-in-out forwards;
+    }
+    @keyframes explode {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(5);
+        opacity: 0;
+      }
+    }
+    /* 별 효과 (이미지 없이 CSS로 구현) */
+    #starryBackground {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.8);
+      display: none;
+      z-index: 15;
+      animation: starAnimation 5s ease-in-out forwards;
+    }
+    @keyframes starAnimation {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(2);
+      }
     }
     #foodImage {
       position: absolute;
@@ -105,17 +143,7 @@
       display: none;
       z-index: 11;
     }
-    .starry-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: url('https://media.giphy.com/media/JcR2bhoCJz1sA/giphy.gif') center/cover no-repeat;
-      display: none;
-      z-index: 15;
-    }
-    /* 음식 검색 영역는 게임 흐름 후 나타나도록 숨김 */
+    /* 음식 검색 영역 (게임 진행 후 나타남) */
     #foodSearch {
       position: absolute;
       bottom: 5%;
@@ -150,7 +178,7 @@
     <img id="headband" src="" alt="머리띠">
     <img id="cake" src="cake.png" alt="생일 케이크">
     <div id="explosion"></div>
-    <div class="starry-background" id="starryBackground"></div>
+    <div id="starryBackground"></div>
     <img id="foodImage" src="" alt="생일상 이미지">
     <audio id="song" src="song.mp3"></audio>
   </div>
@@ -164,25 +192,25 @@
   </div>
 
   <script>
-    // 장소 데이터
+    // 장소 데이터 (모든 이미지 확장자는 .png)
     const places = {
       "도서관": {
-        image: "https://example.com/images/library.png",
+        image: "library.png",
         message: "쉿! 여긴 도서관입니다. 사서 선생님: \"조용히 해 주세요!!\"",
         duration: 4000
       },
       "바닷가": {
-        image: "https://example.com/images/beach.png",
+        image: "beach.png",
         message: "비키니는 없지만 웃음은 있어요. 파티가 시작됩니다!",
         duration: 5000
       },
       "스터디카페": {
-        image: "https://example.com/images/study.png",
+        image: "study.png",
         message: "공부하러 왔니? 아니 생일파티 하러 왔다고!",
         duration: 6000
       },
       "오두막": {
-        image: "https://example.com/images/hut.png",
+        image: "hut.png",
         message: "이 외딴 곳에서 생일이라니… 너무 로맨틱해!",
         duration: 7000
       }
@@ -200,13 +228,12 @@
     const startButton = document.getElementById("startButton");
     const foodSearch = document.getElementById("foodSearch");
 
-    // "여행 떠나기" 버튼 클릭 시 모든 장소 버튼을 보여줌
+    // "여행 떠나기" 버튼 클릭 시 4개의 장소 중 선택하도록 보이기
     startButton.addEventListener("click", showPlaces);
 
     function showPlaces() {
       document.getElementById("startBanner").style.display = "none";
       messageBox.innerHTML = "생일파티 장소를 선택하세요!";
-      // 각 장소 버튼을 생성
       Object.keys(places).forEach(place => {
         const btn = createButton(place);
         btn.onclick = () => selectPlace(place);
@@ -256,6 +283,10 @@
           const blowBtn = createButton("촛불 끄기");
           blowBtn.onclick = () => {
             cake.style.display = "none";
+            // 폭죽 효과
+            explosion.style.display = "block";
+            setTimeout(() => explosion.style.display = "none", 2000);
+            // 별 효과
             starryBackground.style.display = "block";
             setTimeout(() => starryBackground.style.display = "none", 5000);
             // 음식 검색 영역 보이기
@@ -273,36 +304,10 @@
         alert("음식 이름을 입력해주세요!");
         return;
       }
-      
       document.getElementById("loading").style.display = "block";
       foodImage.style.display = "none";
       
       try {
+        // 구글 Custom Search API 호출
         const apiKey = 'AIzaSyDtVwNW5FgG1Dmi0PCcKFMn5qP6alZqYFE';
         const cx = '64d91bb6fe3bc4dfa';
-        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(foodName)}&searchType=image&key=${apiKey}&cx=${cx}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data.items && data.items.length > 0) {
-          const imageUrl = data.items[0].link;
-          foodImage.src = imageUrl;
-          foodImage.style.display = "block";
-          messageBox.innerHTML = `${foodName} 생일상이 도착했습니다!`;
-        } else {
-          messageBox.innerHTML = "이미지를 찾을 수 없습니다.";
-        }
-      } catch (error) {
-        console.error(error);
-        messageBox.innerHTML = "이미지 검색에 실패했습니다. 다시 시도해주세요.";
-      } finally {
-        document.getElementById("loading").style.display = "none";
-        setTimeout(() => {
-          const restartBtn = createButton("다시 시작하기");
-          restartBtn.onclick = () => location.reload();
-          messageBox.appendChild(restartBtn);
-        }, 3000);
-      }
-    }
-  </script>
-</body>
-</html>
