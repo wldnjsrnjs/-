@@ -5,6 +5,7 @@
   <title>일찍 자면 안돼지</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* 기본 스타일은 이전과 동일 */
     body {
       margin: 0;
       padding: 0;
@@ -88,7 +89,7 @@
       display: none;
       z-index: 10;
     }
-    /* 폭죽 효과 (이미지 없이 CSS로 구현) */
+    /* 폭죽 효과 (CSS 애니메이션) */
     #explosion {
       position: absolute;
       top: 0;
@@ -110,7 +111,7 @@
         opacity: 0;
       }
     }
-    /* 별 효과 (이미지 없이 CSS로 구현) */
+    /* 별 효과 (CSS 애니메이션) */
     #starryBackground {
       position: absolute;
       top: 0;
@@ -299,7 +300,7 @@
               setTimeout(() => {
                 starryBackground.style.display = "none";
               }, 5000);
-              // 음식 검색 영역 보이기 (생일상 차리는 장면)
+              // 음식 검색 영역 보이기
               showFoodSearch();
             });
             messageBox.appendChild(blowBtn);
@@ -326,6 +327,7 @@
           const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(foodName)}&searchType=image&key=${apiKey}&cx=${cx}`;
           const response = await fetch(url);
           const data = await response.json();
+          console.log(data); // 디버그용: 응답 데이터 확인
           if (data.items && data.items.length > 0) {
             const imageUrl = data.items[0].link;
             foodImage.src = imageUrl;
