@@ -5,7 +5,7 @@
   <title>일찍 자면 안돼지</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* 기본 스타일은 이전과 동일 */
+    /* 기본 스타일 (변경 없음) */
     body {
       margin: 0;
       padding: 0;
@@ -89,7 +89,7 @@
       display: none;
       z-index: 10;
     }
-    /* 폭죽 효과 (CSS 애니메이션) */
+    /* 폭죽 효과 (CSS 애니메이션, 이미지 미사용) */
     #explosion {
       position: absolute;
       top: 0;
@@ -111,14 +111,14 @@
         opacity: 0;
       }
     }
-    /* 별 효과 (CSS 애니메이션) */
+    /* 별 효과 (CSS 애니메이션, 이미지 미사용) */
     #starryBackground {
       position: absolute;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255,255,255,0.8);
       display: none;
       z-index: 15;
       animation: starAnimation 5s ease-in-out forwards;
@@ -189,8 +189,8 @@
   <!-- 음식 검색 영역 (게임 진행 후 표시됨) -->
   <div id="foodSearch">
     <h1>먹고 싶은 음식을 입력하세요!</h1>
-    <input id="foodInput" class="input-box" type="text" placeholder="예: 삼겹살, 초밥 등" />
-    <button class="button" onclick="searchImage()">이미지 검색</button>
+    <input id="foodInput" class="input-box" type="text" placeholder="예: 삼겹살, 초밥 등">
+    <button class="button" id="searchButton">이미지 검색</button>
     <div id="loading" style="display: none;">이미지를 검색 중입니다...</div>
   </div>
 
@@ -231,6 +231,7 @@
       const foodImage = document.getElementById("foodImage");
       const startButton = document.getElementById("startButton");
       const foodSearch = document.getElementById("foodSearch");
+      const searchButton = document.getElementById("searchButton");
 
       // "여행 떠나기" 버튼 클릭 시 장소 선택 화면 보이기
       startButton.addEventListener("click", showPlaces);
@@ -327,7 +328,7 @@
           const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(foodName)}&searchType=image&key=${apiKey}&cx=${cx}`;
           const response = await fetch(url);
           const data = await response.json();
-          console.log(data); // 디버그용: 응답 데이터 확인
+          console.log(data); // 디버그용 로그
           if (data.items && data.items.length > 0) {
             const imageUrl = data.items[0].link;
             foodImage.src = imageUrl;
@@ -350,6 +351,9 @@
           }, 3000);
         }
       }
+
+      // "이미지 검색" 버튼 이벤트 등록
+      searchButton.addEventListener("click", searchImage);
     });
   </script>
 </body>
