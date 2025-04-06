@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>일찍 자면 안돼지</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
@@ -27,8 +27,8 @@
       top: 10%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.8);
-      color: black;
+      background: rgba(255,255,255,0.8);
+      color: #000;
       padding: 20px;
       border-radius: 20px;
       font-size: 1.5em;
@@ -70,8 +70,8 @@
       top: 5%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.9);
-      color: black;
+      background: rgba(255,255,255,0.9);
+      color: #000;
       padding: 10px;
       border-radius: 10px;
       font-size: 1.2em;
@@ -103,6 +103,7 @@
       transform: translateY(-50%);
       width: 250px;
       display: none;
+      z-index: 11;
     }
     .starry-background {
       position: absolute;
@@ -113,6 +114,15 @@
       background: url('https://media.giphy.com/media/JcR2bhoCJz1sA/giphy.gif') center/cover no-repeat;
       display: none;
       z-index: 15;
+    }
+    /* 음식 검색 영역는 게임 흐름 후 나타나도록 숨김 */
+    #foodSearch {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      display: none;
     }
     .input-box {
       padding: 10px;
@@ -129,7 +139,6 @@
   </style>
 </head>
 <body>
-
   <div id="container">
     <div class="banner" id="startBanner">
       생일 축하, 안돼지!<br>
@@ -137,23 +146,25 @@
       <button class="button" id="startButton">여행 떠나기</button>
     </div>
     <div id="message"></div>
-    <img id="friend" src="friend.png">
-    <img id="headband" src="">
-    <img id="cake" src="cake.png">
+    <img id="friend" src="friend.png" alt="친구">
+    <img id="headband" src="" alt="머리띠">
+    <img id="cake" src="cake.png" alt="생일 케이크">
     <div id="explosion"></div>
     <div class="starry-background" id="starryBackground"></div>
-    <img id="foodImage" src="" alt="Food Image" style="display: none;">
+    <img id="foodImage" src="" alt="생일상 이미지">
     <audio id="song" src="song.mp3"></audio>
   </div>
 
+  <!-- 음식 검색 영역 (게임 진행 후 표시됨) -->
   <div id="foodSearch">
-    <h1>음식 이미지를 검색하세요!</h1>
-    <input id="foodInput" class="input-box" type="text" placeholder="음식 이름을 입력하세요" />
+    <h1>먹고 싶은 음식을 입력하세요!</h1>
+    <input id="foodInput" class="input-box" type="text" placeholder="예: 삼겹살, 초밥 등" />
     <button class="button" onclick="searchImage()">이미지 검색</button>
     <div id="loading" style="display: none;">이미지를 검색 중입니다...</div>
   </div>
 
   <script>
+    // 장소 데이터
     const places = {
       "도서관": {
         image: "https://example.com/images/library.png",
@@ -187,10 +198,29 @@
     const song = document.getElementById("song");
     const foodImage = document.getElementById("foodImage");
     const startButton = document.getElementById("startButton");
+    const foodSearch = document.getElementById("foodSearch");
 
-    startButton.addEventListener("click", function() {
-      selectPlace("도서관");  // 여행 떠나기 버튼 클릭 시 기본 장소로 '도서관' 선택
-    });
+    // "여행 떠나기" 버튼 클릭 시 모든 장소 버튼을 보여줌
+    startButton.addEventListener("click", showPlaces);
+
+    function showPlaces() {
+      document.getElementById("startBanner").style.display = "none";
+      messageBox.innerHTML = "생일파티 장소를 선택하세요!";
+      // 각 장소 버튼을 생성
+      Object.keys(places).forEach(place => {
+        const btn = createButton(place);
+        btn.onclick = () => selectPlace(place);
+        messageBox.appendChild(btn);
+      });
+    }
+
+    function createButton(label) {
+      const btn = document.createElement("button");
+      btn.innerText = label;
+      btn.className = "button";
+      btn.disabled = false;
+      return btn;
+    }
 
     function selectPlace(place) {
       container.style.backgroundImage = `url('${places[place].image}')`;
@@ -217,30 +247,20 @@
     function showCake() {
       setTimeout(() => {
         messageBox.innerHTML = "생일축하 노래를 듣고 촛불을 꺼보세요!";
-        const stopBtn = document.createElement("button");
-        stopBtn.innerText = "노래 중지";
-        stopBtn.className = "button";
+        const stopBtn = createButton("노래 중지");
         stopBtn.onclick = () => song.pause();
         messageBox.appendChild(stopBtn);
         song.play();
         setTimeout(() => {
           cake.style.display = "block";
-          const blowBtn = document.createElement("button");
-          blowBtn.innerText = "촛불 끄기";
-          blowBtn.className = "button";
+          const blowBtn = createButton("촛불 끄기");
           blowBtn.onclick = () => {
             cake.style.display = "none";
             starryBackground.style.display = "block";
             setTimeout(() => starryBackground.style.display = "none", 5000);
-            messageBox.innerHTML = "먹고 싶은 음식을 입력하세요!";
-            const input = document.createElement("input");
-            input.placeholder = "예: 삼겹살, 초밥 등";
-            const foodBtn = document.createElement("button");
-            foodBtn.innerText = "검색";
-            foodBtn.className = "button";
-            foodBtn.onclick = searchImage;
-            messageBox.appendChild(input);
-            messageBox.appendChild(foodBtn);
+            // 음식 검색 영역 보이기
+            foodSearch.style.display = "block";
+            messageBox.innerHTML = "";
           };
           messageBox.appendChild(blowBtn);
         }, 5000);
@@ -254,18 +274,35 @@
         return;
       }
       
-      // 로딩 메시지 보이기
       document.getElementById("loading").style.display = "block";
-      document.getElementById("foodImage").style.display = "none";
+      foodImage.style.display = "none";
       
       try {
-        const apiKey = 'AIzaSyDtVwNW5FgG1Dmi0PCcKFMn5qP6alZqYFE';  
-        const cx = '64d91bb6fe3bc4dfa';    
-        const url = `https://www.googleapis.com/customsearch/v1?q=${foodName}&searchType=image&key=${apiKey}&cx=${cx}`;
-        
+        const apiKey = 'AIzaSyDtVwNW5FgG1Dmi0PCcKFMn5qP6alZqYFE';
+        const cx = '64d91bb6fe3bc4dfa';
+        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(foodName)}&searchType=image&key=${apiKey}&cx=${cx}`;
         const response = await fetch(url);
         const data = await response.json();
-        
         if (data.items && data.items.length > 0) {
           const imageUrl = data.items[0].link;
-          document.getElementById("foodImage").src = imageUrl;
+          foodImage.src = imageUrl;
+          foodImage.style.display = "block";
+          messageBox.innerHTML = `${foodName} 생일상이 도착했습니다!`;
+        } else {
+          messageBox.innerHTML = "이미지를 찾을 수 없습니다.";
+        }
+      } catch (error) {
+        console.error(error);
+        messageBox.innerHTML = "이미지 검색에 실패했습니다. 다시 시도해주세요.";
+      } finally {
+        document.getElementById("loading").style.display = "none";
+        setTimeout(() => {
+          const restartBtn = createButton("다시 시작하기");
+          restartBtn.onclick = () => location.reload();
+          messageBox.appendChild(restartBtn);
+        }, 3000);
+      }
+    }
+  </script>
+</body>
+</html>
